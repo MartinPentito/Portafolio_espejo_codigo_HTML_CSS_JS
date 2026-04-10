@@ -1,0 +1,286 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-main: #1e1e1e;
+    --bg-panel: #252526;
+    --bg-card: #2d2d30;
+    --border: #3e3e42;
+    --text-main: #d4d4d4;
+    --text-muted: #858585;
+    --accent: #4ec9b0;
+    --accent-strong: #00d4ff;
+    --comment: #6a9955;
+    --keyword: #569cd6;
+    --string: #ce9178;
+    --number: #b5cea8;
+}
+
+body {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background: radial-gradient(circle at top, #252526 0%, var(--bg-main) 55%);
+    color: var(--text-main);
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    flex: 0 0 300px;
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-frame {
+    position: relative;
+    width: 150px;
+    height: 180px;
+    margin-bottom: 20px;
+}
+
+.profile-img,
+.profile-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    border: 2px solid #007acc;
+}
+
+.profile-img {
+    object-fit: cover;
+    display: block;
+    background-color: var(--bg-card);
+}
+
+.profile-fallback {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    font-weight: bold;
+    color: var(--accent-strong);
+    background: linear-gradient(135deg, #1f1f22 0%, #303036 100%);
+}
+
+.profile-frame.missing-image .profile-img {
+    display: none;
+}
+
+.profile-frame.missing-image .profile-fallback {
+    display: flex;
+}
+
+.tag {
+    color: var(--string);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+#sidebar-content {
+    width: 100%;
+}
+
+.section {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.section-title {
+    color: var(--accent);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.enum-content {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-main);
+    margin-left: 10px;
+}
+
+.enum-item {
+    color: var(--text-main);
+    word-break: break-word;
+}
+
+.enum-item a {
+    color: var(--accent-strong);
+    text-decoration: none;
+}
+
+.enum-item a:hover {
+    text-decoration: underline;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px 30px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.status {
+    color: var(--text-muted);
+}
+
+.code-line {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2px;
+}
+
+.line-number {
+    color: var(--text-muted);
+    margin-right: 15px;
+    min-width: 40px;
+    text-align: right;
+    user-select: none;
+}
+
+.code {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment {
+    color: var(--comment);
+}
+
+.keyword {
+    color: var(--keyword);
+}
+
+.class-name {
+    color: var(--accent);
+}
+
+.string {
+    color: var(--string);
+}
+
+.property {
+    color: var(--text-main);
+}
+
+.value {
+    color: var(--string);
+}
+
+.type {
+    color: var(--keyword);
+}
+
+.number {
+    color: var(--number);
+}
+
+.bracket {
+    color: var(--text-main);
+}
+
+.operator {
+    color: var(--text-main);
+}
+
+.copyable {
+    cursor: pointer;
+}
+
+.copyable:hover {
+    text-decoration: underline;
+}
+
+.toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #464647;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        flex-basis: 240px;
+        padding: 16px;
+    }
+
+    .main-content {
+        padding: 18px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main-content {
+        font-size: 12px;
+        padding: 16px;
+    }
+
+    .line-number {
+        min-width: 32px;
+        margin-right: 10px;
+    }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martín Pentito - Portfolio</title>
+    <meta name="description" content="Portfolio técnico de Martín Pentito con perfil, stack y experiencia.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" aria-label="Perfil lateral">
+            <div class="tag">&lt;img&gt;</div>
+            <div class="profile-frame">
+                <img src="profile.jpg" alt="Martín Pentito" class="profile-img" id="profile-image">
+                <div class="profile-fallback" id="profile-fallback" aria-hidden="true">MP</div>
+            </div>
+            <div class="tag">&lt;/img&gt;</div>
+
+            <div id="sidebar-content"></div>
+        </aside>
+
+        <main class="main-content" aria-live="polite">
+            <div class="status" id="loading-state">Cargando perfil...</div>
+            <div id="main-content" hidden></div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

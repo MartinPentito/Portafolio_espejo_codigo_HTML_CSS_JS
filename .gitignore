@@ -1,0 +1,42 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Node (si se usa en el futuro)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build y distribución
+dist/
+build/
+*.zip
+
+# Archivos temporales
+temp/
+tmp/
+*.tmp
+
+# Archivos de configuración local (si hay)
+.env
+.env.local
+
+# Caché
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Foto de perfil (si no se quiere versionar)
+# profile.jpg
+
+# Logs
+*.log
