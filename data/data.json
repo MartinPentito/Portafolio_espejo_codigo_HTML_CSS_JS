@@ -1,0 +1,178 @@
+{
+  "personal": {
+    "name": "Martín Pentito",
+    "title": "Web Developer · Computer Technician · Composer",
+    "focus": "Desarrollo web, automatización y soporte técnico",
+    "location": "Argentina",
+    "email": "",
+    "photo": "assets/ThisJipi_img.png"
+  },
+  "summary": "Apasionado por las computadoras y la música. Responsable y autodidacta, características que me definieron desde niño. Siempre en busca de experiencias que me saquen de mi zona de confort. Disfruto del trabajo en equipo mientras haya respeto y empatía.",
+  "platforms": [
+    "Windows",
+    "Mobile"
+  ],
+  "techStack": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python",
+    "SQL",
+    "WordPress",
+    "Git"
+  ],
+  "tools": [
+    "Visual Studio Code",
+    "GitHub",
+    "XAMPP",
+    "PHPMyAdmin"
+  ],
+  "media": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/martinepentito/"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/MartinPentito"
+    }
+  ],
+  "languages": [
+    {
+      "name": "Español",
+      "level": "Nativo"
+    },
+    {
+      "name": "Inglés",
+      "level": "Profesional"
+    }
+  ],
+  "profile": [
+    "Curioso",
+    "Responsable",
+    "Autodidacta",
+    "Empático",
+    "Resiliente",
+    "Social"
+  ],
+  "highlights": [
+    "Desarrollo web con HTML, CSS, JavaScript y Python.",
+    "Técnico en informática con experiencia en soporte y sistemas.",
+    "Gestión de sitios WordPress y tiendas en Tienda Nube.",
+    "Compositor y músico — HippieCave Estudio Musical."
+  ],
+  "experience": [
+    {
+      "role": "Técnico / Analista",
+      "company": "TecBA — Gobierno de la Ciudad de Buenos Aires",
+      "period": "2025 - Presente",
+      "description": "Bases de datos, Apache, ejecución de scripts."
+    },
+    {
+      "role": "Web Developer",
+      "company": "GreenOlive / CafeMaceda / Laincop — Olivos del Sur SA",
+      "period": "2024 - 2025",
+      "description": "Diseño y programación web con WordPress, gestión de tres sitios y pricing de productos. Data entry y gestión de base de datos en Access. Lanzamiento del sitio Laincop en Tienda Nube con dominio propio."
+    },
+    {
+      "role": "Bar Manager",
+      "company": "Galpón Plaza — Cervecería S.R.L.",
+      "period": "2023 - 2024",
+      "description": "Mozo, bartender, cajero y gestión de proveedores."
+    },
+    {
+      "role": "Systems Analyst",
+      "company": "Cerrocred — FINANCOMP S.A.",
+      "period": "2021 - 2023",
+      "description": "Análisis y gestión de sistemas internos."
+    },
+    {
+      "role": "Customs Broker Assistance",
+      "company": "Estudio Vilches",
+      "period": "2020 - 2021",
+      "description": "Tareas administrativas, control de bill of lading y servicios de mensajería."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Udemy",
+      "period": "2025",
+      "title": "Computación Completo con Windows",
+      "description": "Paquete Office, Bases de Datos, HTML, Python, Sistemas de Información, Introducción a Diseño Gráfico."
+    },
+    {
+      "institution": "Capacitarte",
+      "period": "2025",
+      "title": "WordPress",
+      "description": "WordPress, Funcionalidades, Plugins, Cortafuegos, Dominios, XAMPP, PHPMyAdmin."
+    },
+    {
+      "institution": "UTN",
+      "period": "2024",
+      "title": "Maquetado Web",
+      "description": "HTML, CSS, Registro de dominio, Servidores Web, Responsive Design, Git/GitHub."
+    },
+    {
+      "institution": "IEEE - ITBA",
+      "period": "2021",
+      "title": "Introducción a Python",
+      "description": "Variables, operadores, control de flujo, funciones, estructuras de datos, librerías."
+    },
+    {
+      "institution": "Cens 38",
+      "period": "2015 - 2017",
+      "title": "Técnico Informático",
+      "description": ""
+    },
+    {
+      "institution": "Otto Krause",
+      "period": "2011 - 2015",
+      "title": "Técnico en Electrónica",
+      "description": ""
+    }
+  ],
+  "services": [
+    {
+      "title": "Web Development",
+      "description": "HTML · CSS · JavaScript · WordPress"
+    },
+    {
+      "title": "Technical Service",
+      "description": "Reparación de computadoras y laptops."
+    },
+    {
+      "title": "Composer",
+      "description": "Estudio Musical — HippieCave"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Personal Portfolio",
+      "type": "Proyecto personal",
+      "stack": ["HTML", "CSS", "JavaScript", "Tailwind", "GitHub API"],
+      "description": "Portfolio personal con secciones Home, Services, Resume y Work. Integra la GitHub API para mostrar proyectos publicados en GitHub Pages.",
+      "url": "https://martinpentito.github.io/Personal_Portfolio/"
+    },
+    {
+      "name": "Portfolio espejo",
+      "type": "Proyecto personal",
+      "stack": ["HTML", "CSS", "JavaScript", "JSON"],
+      "description": "Portfolio estático con estética de editor de código, conectado a una fuente de datos única para mantener consistencia y facilitar futuras actualizaciones.",
+      "url": "https://github.com/MartinPentito/Portafolio_espejo_codigo_HTML_CSS_JS"
+    },
+    {
+      "name": "Game Designer Portfolio",
+      "type": "Proyecto para cliente",
+      "stack": ["HTML", "CSS", "JavaScript", "GitHub Pages"],
+      "description": "Portfolio para un diseñador narrativo y de juegos, publicado con GitHub Pages.",
+      "url": "https://martinpentito.github.io/portfolio_react_dante/"
+    },
+    {
+      "name": "Laincop iPhone Catalog",
+      "type": "Proyecto para cliente",
+      "stack": ["HTML", "CSS", "JavaScript"],
+      "description": "Catálogo de productos con flujo de contacto directo por WhatsApp para consultas de venta mobile.",
+      "url": "https://martinpentito.github.io/catalogo-laincop-iphones/"
+    }
+  ]
+}
