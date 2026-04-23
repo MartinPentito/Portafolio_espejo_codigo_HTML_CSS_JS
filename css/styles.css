@@ -109,7 +109,7 @@ body {
     text-align: center;
     line-height: 1.6;
     margin-bottom: 20px;
-    word-break: break-word;
+    min-height: 1.6em;
 }
 
 .section {
@@ -220,7 +220,7 @@ body {
 
 .main-content {
     flex: 1;
-    padding: 20px 30px;
+    padding: 20px 30px 70vh;
     overflow-y: auto;
     font-size: 13px;
     line-height: 1.55;
@@ -338,6 +338,223 @@ body {
 
 .boot-line.done {
     color: var(--accent);
+}
+
+/* ─── Skill Icon Grid ─── */
+.skill-grid-line {
+    align-items: flex-start;
+    padding: 4px 6px;
+}
+
+.skill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 0 10px 32px;
+}
+
+.skill-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    min-width: 64px;
+    transition: border-color 0.15s, transform 0.15s, background-color 0.15s;
+    cursor: default;
+}
+
+.skill-badge:hover {
+    border-color: var(--accent);
+    background-color: rgba(74, 222, 128, 0.06);
+    transform: translateY(-2px);
+}
+
+.skill-icon {
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.skill-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ─── Stats Grid ─── */
+.stat-grid-line {
+    align-items: flex-start;
+    padding: 4px 6px;
+}
+
+.stat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 12px 0 12px 32px;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 18px 28px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--bg-card);
+    min-width: 120px;
+    transition: border-color 0.15s, transform 0.15s, background-color 0.15s;
+    cursor: default;
+}
+
+.stat-card:hover {
+    border-color: var(--accent);
+    background-color: rgba(74, 222, 128, 0.06);
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--accent-strong);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ─── Entry Cards (Experience, Education, Services, Projects) ─── */
+.card-grid-line {
+    align-items: flex-start;
+    padding: 4px 6px;
+}
+
+.card-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0 10px 32px;
+    width: 100%;
+}
+
+.entry-card {
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    transition: border-color 0.15s, transform 0.15s, background-color 0.15s;
+    cursor: default;
+}
+
+.entry-card:hover {
+    border-color: var(--accent);
+    background-color: rgba(74, 222, 128, 0.06);
+    transform: translateX(3px);
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.entry-title {
+    color: var(--function);
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.entry-period {
+    color: var(--number);
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.entry-meta {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.entry-desc {
+    color: var(--string);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.entry-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--keyword);
+    background-color: rgba(86, 156, 214, 0.08);
+}
+
+.entry-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.entry-link {
+    font-size: 11px;
+    color: var(--accent-strong);
+    text-decoration: none;
+    padding: 3px 10px;
+    border: 1px solid rgba(134, 239, 172, 0.3);
+    border-radius: 4px;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.entry-link:hover {
+    background-color: rgba(74, 222, 128, 0.1);
+    border-color: var(--accent);
+    text-decoration: none;
+}
+
+/* ─── Typing animation in sidebar ─── */
+.sidebar-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 1px;
+}
+
+.typing-cursor {
+    display: inline-block;
+    color: var(--accent);
+    animation: blink 1s step-end infinite;
+    font-weight: 100;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .statusbar {
@@ -554,6 +771,14 @@ body {
         min-width: 28px;
         margin-right: 10px;
     }
+
+    .card-grid {
+        padding: 8px 0 8px 16px;
+    }
+
+    .entry-card {
+        padding: 12px 14px;
+    }
 }
 
 /* ─── Small tablet / large phone  (≤ 600px) ─── */
@@ -594,6 +819,19 @@ body {
     .statusbar-item {
         padding: 0 7px;
         font-size: 11px;
+    }
+
+    .card-grid {
+        padding: 6px 0 6px 10px;
+        gap: 8px;
+    }
+
+    .entry-card {
+        padding: 10px 12px;
+    }
+
+    .entry-title {
+        font-size: 12px;
     }
 }
 

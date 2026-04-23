@@ -1,3 +1,29 @@
+// ─── GitHub Config ─────────────────────────────────────────────────────────
+const GITHUB_USER = 'MartinPentito';
+
+// ─── Tech Icon Map (Boxicons) ───────────────────────────────────────────────────
+const TECH_ICON_MAP = {
+    'html':        'bx bxl-html5',
+    'css':         'bx bxl-css3',
+    'javascript':  'bx bxl-javascript',
+    'python':      'bx bxl-python',
+    'sql':         'bx bxs-data',
+    'wordpress':   'bx bxl-wordpress',
+    'git':         'bx bxl-git',
+    'github':      'bx bxl-github',
+    'vscode':      'bx bxl-visual-studio',
+    'visual studio code': 'bx bxl-visual-studio',
+    'xampp':       'bx bx-server',
+    'phpmyadmin':  'bx bx-table',
+    'windows':     'bx bxl-windows',
+    'mobile':      'bx bx-mobile-alt',
+    'tailwind':    'bx bxl-tailwind-css',
+    'react':       'bx bxl-react',
+    'nodejs':      'bx bxl-nodejs',
+    'php':         'bx bxl-php',
+};
+
+// ─── DOM References ──────────────────────────────────────────────────────────
 const stateElements = {
     sidebar: document.getElementById('sidebar-content'),
     main: document.getElementById('main-content'),
@@ -16,9 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadPortfolio() {
     try {
         const dataPromise = fetchData();
+        const reposPromise = fetchGitHubRepos();
         await animateBootSequence();
-        const data = await dataPromise;
-        renderPortfolio(data);
+        const [data, repos] = await Promise.all([dataPromise, reposPromise.catch(() => [])]);
+        renderPortfolio(data, repos);
     } catch (error) {
         showError(error);
         console.error('Error al cargar el portfolio:', error);
@@ -33,15 +60,28 @@ async function fetchData() {
     return response.json();
 }
 
+async function fetchGitHubRepos() {
+    const response = await fetch(
+        `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`
+    );
+    if (!response.ok) throw new Error(`GitHub API error ${response.status}`);
+    return response.json();
+}
+
+function getPublicRepos(repos) {
+    return repos.filter(r => !r.private && r.has_pages);
+}
+
 async function animateBootSequence() {
     const el = stateElements.loading;
     el.innerHTML = '';
 
     const messages = [
-        { text: '$ python portfolio.py', cls: 'boot-line' },
-        { text: 'Loading modules...', cls: 'boot-line' },
-        { text: 'Fetching profile data...', cls: 'boot-line' },
-        { text: '\u2713  Ready', cls: 'boot-line done' }
+        { text: '$ python portfolio.py',       cls: 'boot-line' },
+        { text: 'Loading modules...',           cls: 'boot-line' },
+        { text: 'Fetching profile data...',     cls: 'boot-line' },
+        { text: 'Connecting to GitHub API...',  cls: 'boot-line' },
+        { text: '\u2713  Ready',               cls: 'boot-line done' }
     ];
 
     for (const { text, cls } of messages) {
@@ -64,42 +104,108 @@ function sleep(ms) {
     return new Promise(r => setTimeout(r, ms));
 }
 
-function renderPortfolio(data) {
+function renderPortfolio(data, repos = []) {
     document.title = `${data.personal.name} - Portfolio`;
     stateElements.profileImage.alt = data.personal.name;
     stateElements.profileImage.src = data.personal.photo || 'profile.jpg';
     stateElements.profileFallback.textContent = getInitials(data.personal.name);
 
     stateElements.sidebar.innerHTML = buildSidebar(data);
-    stateElements.main.innerHTML = buildMainContent(data);
+    stateElements.main.innerHTML = buildMainContent(data, repos);
     stateElements.loading.hidden = true;
     stateElements.main.hidden = false;
 
     animateCodeLines();
     initStatusBar();
     initializeInteractions();
+    startTypingAnimation(data);
+    initCounterAnimation();
 }
 
 function buildSidebar(data) {
     const name = escapeHtml(data.personal.name);
-    const title = escapeHtml(data.personal.title);
 
     const nameBlock = `
         <div class="sidebar-name">${name}</div>
-        <div class="sidebar-title">${title}</div>
+        <div class="sidebar-title"><span class="typing-text"></span><span class="typing-cursor">|</span></div>
     `;
 
     return nameBlock + createMediaSection(data.media);
 }
 
-function buildMainContent(data) {
+// ─── Typing Animation (sidebar title) ──────────────────
+function startTypingAnimation(data) {
+    const textEl = document.querySelector('.typing-text');
+    if (!textEl) return;
+
+    const roles = (data.personal.title || '')
+        .split('·')
+        .map(r => r.trim())
+        .filter(Boolean);
+
+    if (!roles.length) return;
+
+    let roleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    function tick() {
+        const current = roles[roleIndex];
+        if (isDeleting) {
+            charIndex--;
+            textEl.textContent = current.slice(0, charIndex);
+            if (charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                setTimeout(tick, 400);
+                return;
+            }
+            setTimeout(tick, 40);
+        } else {
+            charIndex++;
+            textEl.textContent = current.slice(0, charIndex);
+            if (charIndex === current.length) {
+                isDeleting = true;
+                setTimeout(tick, 1800);
+                return;
+            }
+            setTimeout(tick, 70);
+        }
+    }
+
+    setTimeout(tick, 500);
+}
+
+// ─── Animated Counters ──────────────────────────────────
+function initCounterAnimation() {
+    document.querySelectorAll('[data-count-to]').forEach(el => {
+        const target = parseInt(el.dataset.countTo, 10);
+        if (!Number.isFinite(target) || target <= 0) {
+            el.textContent = target || 0;
+            return;
+        }
+        let current = 0;
+        const step = Math.max(Math.ceil(target / 60), 1);
+        const update = () => {
+            current = Math.min(current + step, target);
+            el.textContent = current;
+            if (current < target) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+    });
+}
+
+// ─── Main Content ────────────────────────────────────────
+function buildMainContent(data, repos = []) {
+    const publicRepos = getPublicRepos(repos);
     const sections = [
         { id: 'profile',    label: 'PROFILE',    lines: buildProfileLines(data) },
         { id: 'stack',      label: 'STACK',      lines: buildStackLines(data) },
+        { id: 'stats',      label: 'STATS',      lines: buildStatsLines(data, publicRepos) },
         { id: 'experience', label: 'EXPERIENCE', lines: buildExperienceLines(data) },
         { id: 'education',  label: 'EDUCATION',  lines: buildEducationLines(data) },
         { id: 'services',   label: 'SERVICES',   lines: buildServicesLines(data) },
-        { id: 'projects',   label: 'PROJECTS',   lines: buildProjectsLines(data) }
+        { id: 'projects',   label: 'PROJECTS',   lines: buildProjectsLines(data, publicRepos) }
     ];
 
     stateElements.sectionNav.innerHTML = sections
@@ -154,9 +260,10 @@ function buildStackLines(data) {
 
     if (data.techStack && data.techStack.length) {
         lines.push(blankLine());
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Lenguajes y tecnolog\u00edas'));
+        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Lenguajes y tecnologías'));
         const tech = data.techStack.map(t => `<span class="string">"${escapeHtml(t)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">tech_stack</span> <span class="operator">=</span> <span class="bracket">[</span>${tech}<span class="bracket">]</span>`));
+        lines.push(skillGridLine(data.techStack));
     }
 
     if (data.platforms && data.platforms.length) {
@@ -164,6 +271,7 @@ function buildStackLines(data) {
         lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Plataformas'));
         const plat = data.platforms.map(p => `<span class="string">"${escapeHtml(p)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">platforms</span> <span class="operator">=</span> <span class="bracket">[</span>${plat}<span class="bracket">]</span>`));
+        lines.push(skillGridLine(data.platforms));
     }
 
     if (data.tools && data.tools.length) {
@@ -171,6 +279,7 @@ function buildStackLines(data) {
         lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Herramientas'));
         const tools = data.tools.map(t => `<span class="string">"${escapeHtml(t)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">tools</span> <span class="operator">=</span> <span class="bracket">[</span>${tools}<span class="bracket">]</span>`));
+        lines.push(skillGridLine(data.tools));
     }
 
     if (data.media && data.media.length) {
@@ -186,6 +295,29 @@ function buildStackLines(data) {
     return lines;
 }
 
+function buildStatsLines(data, repos = []) {
+    const lines = [];
+    lines.push(blankLine());
+    lines.push(codeLine('<span class="keyword">class</span> <span class="class-name">Stats</span><span class="operator">:</span>'));
+    lines.push(blankLine());
+    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Métricas'));
+    lines.push(blankLine());
+
+    const yearsExp = new Date().getFullYear() - 2020;
+    const techCount = (data.techStack || []).length;
+    const projectCount = repos.length || (data.projects || []).length;
+
+    const stats = [
+        { icon: 'bx bx-calendar',       label: 'years_of_experience', value: yearsExp },
+        { icon: 'bx bx-code-curly',     label: 'technologies',        value: techCount },
+        { icon: 'bx bxl-github',        label: 'github_projects',     value: projectCount },
+    ];
+
+    lines.push(statGridLine(stats));
+
+    return lines;
+}
+
 function buildExperienceLines(data) {
     const lines = [];
     lines.push(blankLine());
@@ -193,14 +325,19 @@ function buildExperienceLines(data) {
 
     if (!data.experience || !data.experience.length) return lines;
 
-    data.experience.forEach((job, index) => {
-        if (index > 0) lines.push(blankLine());
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">${escapeHtml(toSnakeCaseName(job.role))}</span><span class="bracket">(</span><span class="keyword">self</span><span class="bracket">)</span><span class="operator">:</span>`));
-        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(job.company)} | ${escapeHtml(job.period)}`));
-        if (job.description) {
-            lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"""${escapeHtml(job.description)}"""</span>`));
-        }
-    });
+    lines.push(blankLine());
+    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Historial laboral'));
+
+    const cards = data.experience.map(job => `<div class="entry-card">
+            <div class="entry-header">
+                <span class="entry-title">${escapeHtml(job.role)}</span>
+                <span class="entry-period">${escapeHtml(job.period)}</span>
+            </div>
+            <div class="entry-meta">${escapeHtml(job.company)}</div>
+            ${job.description ? `<div class="entry-desc">"${escapeHtml(job.description)}"</div>` : ''}
+        </div>`).join('');
+
+    lines.push(cardGridLine(cards));
 
     return lines;
 }
@@ -212,15 +349,19 @@ function buildEducationLines(data) {
 
     if (!data.education || !data.education.length) return lines;
 
-    data.education.forEach((edu, index) => {
-        if (index > 0) lines.push(blankLine());
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">${escapeHtml(toSnakeCaseName(edu.institution))}</span><span class="bracket">(</span><span class="keyword">self</span><span class="bracket">)</span><span class="operator">:</span>`));
-        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(edu.period)}`));
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">_title</span> <span class="operator">=</span> <span class="string">"${escapeHtml(edu.title)}"</span>`));
-        if (edu.description) {
-            lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(edu.description)}`));
-        }
-    });
+    lines.push(blankLine());
+    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Formación académica'));
+
+    const cards = data.education.map(edu => `<div class="entry-card">
+            <div class="entry-header">
+                <span class="entry-title">${escapeHtml(edu.title)}</span>
+                <span class="entry-period">${escapeHtml(edu.period)}</span>
+            </div>
+            <div class="entry-meta">${escapeHtml(edu.institution)}</div>
+            ${edu.description ? `<div class="entry-desc"># ${escapeHtml(edu.description)}</div>` : ''}
+        </div>`).join('');
+
+    lines.push(cardGridLine(cards));
 
     return lines;
 }
@@ -232,31 +373,68 @@ function buildServicesLines(data) {
 
     if (!data.services || !data.services.length) return lines;
 
-    data.services.forEach((service, index) => {
-        if (index > 0) lines.push(blankLine());
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">${escapeHtml(toSnakeCaseName(service.title))}</span><span class="bracket">(</span><span class="keyword">self</span><span class="bracket">)</span><span class="operator">:</span>`));
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"""${escapeHtml(service.description)}"""</span>`));
-    });
+    lines.push(blankLine());
+    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Servicios ofrecidos'));
+
+    const cards = data.services.map(service => `<div class="entry-card">
+            <div class="entry-title">${escapeHtml(service.title)}</div>
+            ${service.description ? `<div class="entry-desc" style="margin-top:6px">"${escapeHtml(service.description)}"</div>` : ''}
+        </div>`).join('');
+
+    lines.push(cardGridLine(cards));
 
     return lines;
 }
 
-function buildProjectsLines(data) {
+function buildProjectsLines(data, repos = []) {
     const lines = [];
     lines.push(blankLine());
     lines.push(codeLine('<span class="keyword">class</span> <span class="class-name">Projects</span><span class="operator">:</span>'));
+    lines.push(blankLine());
 
-    data.projects.forEach((project, index) => {
-        if (index > 0) lines.push(blankLine());
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">def</span> <span class="function">${escapeHtml(toSnakeCaseName(project.name))}</span><span class="bracket">(</span><span class="keyword">self</span><span class="bracket">)</span><span class="operator">:</span>`));
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"""${escapeHtml(project.description)}"""</span>`));
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">_type</span> <span class="operator">=</span> <span class="string">"${escapeHtml(project.type)}"</span>`));
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">_stack</span> <span class="operator">=</span> ${buildStringArray(project.stack)}`));
+    const projects = repos.length > 0
+        ? repos.map(r => ({
+            name: r.name,
+            description: r.description || '',
+            type: 'GitHub · GitHub Pages',
+            stack: r.topics || [],
+            url: r.homepage || `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/`,
+            repoUrl: r.html_url,
+            updated: r.updated_at
+        }))
+        : (data.projects || []);
 
-        if (project.url) {
-            lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">_url</span> <span class="operator">=</span> <a class="string" href="${escapeAttribute(project.url)}" target="_blank" rel="noreferrer">"${escapeHtml(project.url)}"</a>`));
-        }
-    });
+    if (!projects.length) {
+        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# No se encontraron proyectos'));
+        return lines;
+    }
+
+    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Proyectos públicos'));
+
+    const cards = projects.map(project => {
+        const date = project.updated
+            ? new Date(project.updated).toLocaleDateString('es-AR', { year: 'numeric', month: 'short', day: 'numeric' })
+            : '';
+        const tags = project.stack && project.stack.length
+            ? `<div class="entry-tags">${project.stack.map(t => `<span class="entry-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+            : '';
+        const links = [
+            project.url ? `<a class="entry-link" href="${escapeAttribute(project.url)}" target="_blank" rel="noreferrer">_live ↗</a>` : '',
+            project.repoUrl ? `<a class="entry-link" href="${escapeAttribute(project.repoUrl)}" target="_blank" rel="noreferrer">_repo ↗</a>` : ''
+        ].filter(Boolean).join('');
+        return `<div class="entry-card">
+            <div class="entry-header">
+                <span class="entry-title">${escapeHtml(project.name)}</span>
+                ${date ? `<span class="entry-period">${date}</span>` : ''}
+            </div>
+            ${project.type ? `<div class="entry-meta">${escapeHtml(project.type)}</div>` : ''}
+            ${project.description ? `<div class="entry-desc">"${escapeHtml(project.description)}"</div>` : ''}
+            ${tags}
+            ${links ? `<div class="entry-links">${links}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    lines.push(cardGridLine(cards));
 
     return lines;
 }
@@ -293,12 +471,36 @@ function codeLine(content) {
     return `<div class="code-line"><div class="line-number"></div><div class="code">${content}</div></div>`;
 }
 
+function skillGridLine(items) {
+    const badges = items.map(name => {
+        const key = name.toLowerCase();
+        const iconClass = TECH_ICON_MAP[key] || 'bx bx-code-alt';
+        return `<div class="skill-badge"><i class="${iconClass} skill-icon"></i><span class="skill-label">${escapeHtml(name)}</span></div>`;
+    }).join('');
+    return `<div class="code-line skill-grid-line"><div class="line-number"></div><div class="code skill-grid">${badges}</div></div>`;
+}
+
+function statGridLine(stats) {
+    const cards = stats.map(({ icon, label, value }) =>
+        `<div class="stat-card">
+            <i class="${icon} stat-icon"></i>
+            <span class="stat-number" data-count-to="${value}">0</span>
+            <span class="stat-label">${escapeHtml(label)}</span>
+        </div>`
+    ).join('');
+    return `<div class="code-line stat-grid-line"><div class="line-number"></div><div class="code stat-grid">${cards}</div></div>`;
+}
+
 function commentLine(text) {
     return codeLine(`<span class="comment">${text}</span>`);
 }
 
 function blankLine() {
     return codeLine('');
+}
+
+function cardGridLine(cardsHtml) {
+    return `<div class="code-line card-grid-line"><div class="line-number"></div><div class="code card-grid">${cardsHtml}</div></div>`;
 }
 
 function animateCodeLines() {
@@ -368,10 +570,19 @@ function initializeInteractions() {
     function updateActiveTab() {
         const scrollable = isContainerScrollable();
         const containerTop = scrollable ? mainContent.getBoundingClientRect().top : 0;
-        let activeId = sections[0]?.id;
-        for (const section of sections) {
-            if (section.getBoundingClientRect().top - containerTop <= 60) {
-                activeId = section.id;
+        const atBottom = scrollable
+            ? mainContent.scrollHeight - mainContent.scrollTop - mainContent.clientHeight < 4
+            : document.documentElement.scrollHeight - window.scrollY - window.innerHeight < 4;
+
+        let activeId = atBottom
+            ? sections[sections.length - 1]?.id
+            : sections[0]?.id;
+
+        if (!atBottom) {
+            for (const section of sections) {
+                if (section.getBoundingClientRect().top - containerTop <= 60) {
+                    activeId = section.id;
+                }
             }
         }
         tabs.forEach(tab => {
