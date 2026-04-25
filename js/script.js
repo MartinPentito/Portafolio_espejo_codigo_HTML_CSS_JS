@@ -1,5 +1,377 @@
 // ─── GitHub Config ─────────────────────────────────────────────────────────
 const GITHUB_USER = 'MartinPentito';
+const THEME_STORAGE_KEY = 'portfolio-theme';
+const LANG_STORAGE_KEY = 'portfolio-language';
+const MOBILE_SIDEBAR_STORAGE_KEY = 'portfolio-mobile-sidebar-collapsed';
+const DEFAULT_THEME = 'vscode-dark-plus';
+const DEFAULT_LANG = 'es';
+const SUPPORTED_LANGS = ['es', 'en', 'de', 'ja'];
+
+const LOCALE_BY_LANG = {
+    es: 'es-AR',
+    en: 'en-US',
+    de: 'de-DE',
+    ja: 'ja-JP'
+};
+
+const I18N = {
+    es: {
+        page_title_suffix: 'Portfolio',
+        theme_title: 'theme:',
+        language_title: 'lang:',
+        theme_aria: 'Temas inspirados en Visual Studio Code',
+        lang_aria: 'Idioma de la web',
+        nav_aria: 'Secciones del portfolio',
+        boot_loading_modules: 'Cargando modulos...',
+        boot_fetching_profile: 'Obteniendo datos del perfil...',
+        boot_connecting_github: 'Conectando con GitHub API...',
+        boot_ready: 'Listo',
+        section_profile: 'PROFILE',
+        section_stack: 'STACK',
+        section_stats: 'STATS',
+        section_experience: 'EXPERIENCE',
+        section_education: 'EDUCATION',
+        section_services: 'SERVICES',
+        section_projects: 'PROJECTS',
+        stack_languages: 'Lenguajes y tecnologias',
+        stack_platforms: 'Plataformas',
+        stack_tools: 'Herramientas',
+        stack_links: 'Links',
+        stats_metrics: 'Metricas',
+        exp_history: 'Historial laboral',
+        edu_history: 'Formacion academica',
+        services_offered: 'Servicios ofrecidos',
+        projects_none: 'No se encontraron proyectos',
+        projects_public: 'Proyectos publicos',
+        case_problem: 'Problema',
+        case_solution: 'Solucion',
+        case_result: 'Resultado',
+        link_live: '_live ↗',
+        link_repo: '_repo ↗',
+        media_title: 'media:',
+        copied_to_clipboard: 'Dato copiado al portapapeles',
+        copy_error: 'No se pudo copiar el dato:',
+        status_lines: 'lineas',
+        load_error_console: 'Error al cargar el portfolio:',
+        load_error_ui: 'No se pudo cargar el portfolio',
+        load_error_hint: ' Abrilo con Live Server o un servidor local para permitir la carga de data.json.',
+        data_error: 'No se pudo cargar data.json',
+        projects_search_placeholder: 'Buscar proyecto o stack...',
+        projects_all_types: 'Todos los tipos',
+        projects_all_tech: 'Todas las tecnologias',
+        projects_matches: 'resultados',
+        projects_no_match: 'No hay proyectos que coincidan con el filtro.',
+        cmd_placeholder: 'Escribi un comando...',
+        cmd_open_palette: 'Abrir command palette',
+        cmd_theme_next: 'Cambiar al siguiente tema',
+        cmd_lang_next: 'Cambiar al siguiente idioma',
+        cmd_go_section: 'Ir a',
+        cmd_copy_email: 'Copiar email',
+        cmd_download_cv: 'Descargar CV',
+        sidebar_show: 'Mostrar perfil',
+        sidebar_hide: 'Ocultar perfil',
+        profile_cv: 'CV',
+        cmd_no_results: 'Sin comandos coincidentes.',
+        seo_title: 'Portfolio de Martin Pentito',
+        seo_description: 'Portfolio tecnico de Martin Pentito: desarrollo web, soporte tecnico y proyectos reales.',
+        print_pdf: 'Imprimir / PDF',
+        project_type_github: 'Proyecto open source · GitHub Pages',
+        project_no_description: 'Repositorio publico en GitHub.',
+        years_of_experience: 'Años de experiencia',
+        technologies: 'Tecnologías',
+        github_projects: 'Proyectos'
+    },
+    en: {
+        page_title_suffix: 'Portfolio',
+        theme_title: 'theme:',
+        language_title: 'lang:',
+        theme_aria: 'Visual Studio Code inspired themes',
+        lang_aria: 'Website language',
+        nav_aria: 'Portfolio sections',
+        boot_loading_modules: 'Loading modules...',
+        boot_fetching_profile: 'Fetching profile data...',
+        boot_connecting_github: 'Connecting to GitHub API...',
+        boot_ready: 'Ready',
+        section_profile: 'PROFILE',
+        section_stack: 'STACK',
+        section_stats: 'STATS',
+        section_experience: 'EXPERIENCE',
+        section_education: 'EDUCATION',
+        section_services: 'SERVICES',
+        section_projects: 'PROJECTS',
+        stack_languages: 'Languages and technologies',
+        stack_platforms: 'Platforms',
+        stack_tools: 'Tools',
+        stack_links: 'Links',
+        stats_metrics: 'Metrics',
+        exp_history: 'Work history',
+        edu_history: 'Education',
+        services_offered: 'Services',
+        projects_none: 'No projects found',
+        projects_public: 'Public projects',
+        case_problem: 'Problem',
+        case_solution: 'Solution',
+        case_result: 'Result',
+        link_live: '_live ↗',
+        link_repo: '_repo ↗',
+        media_title: 'media:',
+        copied_to_clipboard: 'Copied to clipboard',
+        copy_error: 'Could not copy data:',
+        status_lines: 'lines',
+        load_error_console: 'Error loading portfolio:',
+        load_error_ui: 'Could not load portfolio',
+        load_error_hint: ' Open it with Live Server or a local server to allow loading data.json.',
+        data_error: 'Could not load data.json',
+        projects_search_placeholder: 'Search project or stack...',
+        projects_all_types: 'All types',
+        projects_all_tech: 'All technologies',
+        projects_matches: 'results',
+        projects_no_match: 'No projects match the current filter.',
+        cmd_placeholder: 'Type a command...',
+        cmd_open_palette: 'Open command palette',
+        cmd_theme_next: 'Switch to next theme',
+        cmd_lang_next: 'Switch to next language',
+        cmd_go_section: 'Go to',
+        cmd_copy_email: 'Copy email',
+        cmd_download_cv: 'Download CV',
+        sidebar_show: 'Show profile',
+        sidebar_hide: 'Hide profile',
+        profile_cv: 'CV',
+        cmd_no_results: 'No matching commands.',
+        seo_title: 'Martin Pentito Portfolio',
+        seo_description: 'Technical portfolio of Martin Pentito: web development, technical support, and real projects.',
+        print_pdf: 'Print / PDF',
+        project_type_github: 'Open source project · GitHub Pages',
+        project_no_description: 'Public repository on GitHub.',
+        years_of_experience: 'Years of experience',
+        technologies: 'Technologies',
+        github_projects: 'Projects'
+    },
+    de: {
+        page_title_suffix: 'Portfolio',
+        theme_title: 'theme:',
+        language_title: 'lang:',
+        theme_aria: 'Von Visual Studio Code inspirierte Themes',
+        lang_aria: 'Website-Sprache',
+        nav_aria: 'Portfolio-Abschnitte',
+        boot_loading_modules: 'Module werden geladen...',
+        boot_fetching_profile: 'Profildaten werden geladen...',
+        boot_connecting_github: 'Verbindung zur GitHub-API...',
+        boot_ready: 'Bereit',
+        section_profile: 'PROFILE',
+        section_stack: 'STACK',
+        section_stats: 'STATS',
+        section_experience: 'EXPERIENCE',
+        section_education: 'EDUCATION',
+        section_services: 'SERVICES',
+        section_projects: 'PROJECTS',
+        stack_languages: 'Sprachen und Technologien',
+        stack_platforms: 'Plattformen',
+        stack_tools: 'Werkzeuge',
+        stack_links: 'Links',
+        stats_metrics: 'Kennzahlen',
+        exp_history: 'Berufserfahrung',
+        edu_history: 'Ausbildung',
+        services_offered: 'Angebotene Services',
+        projects_none: 'Keine Projekte gefunden',
+        projects_public: 'Offentliche Projekte',
+        case_problem: 'Problem',
+        case_solution: 'Losung',
+        case_result: 'Ergebnis',
+        link_live: '_live ↗',
+        link_repo: '_repo ↗',
+        media_title: 'media:',
+        copied_to_clipboard: 'In die Zwischenablage kopiert',
+        copy_error: 'Daten konnten nicht kopiert werden:',
+        status_lines: 'Zeilen',
+        load_error_console: 'Fehler beim Laden des Portfolios:',
+        load_error_ui: 'Portfolio konnte nicht geladen werden',
+        load_error_hint: ' Bitte mit Live Server oder lokalem Server offnen, damit data.json geladen werden kann.',
+        data_error: 'data.json konnte nicht geladen werden',
+        projects_search_placeholder: 'Projekt oder Stack suchen...',
+        projects_all_types: 'Alle Typen',
+        projects_all_tech: 'Alle Technologien',
+        projects_matches: 'Ergebnisse',
+        projects_no_match: 'Keine Projekte entsprechen dem aktuellen Filter.',
+        cmd_placeholder: 'Befehl eingeben...',
+        cmd_open_palette: 'Command Palette offnen',
+        cmd_theme_next: 'Zum nachsten Theme wechseln',
+        cmd_lang_next: 'Zur nachsten Sprache wechseln',
+        cmd_go_section: 'Gehe zu',
+        cmd_copy_email: 'E-Mail kopieren',
+        cmd_download_cv: 'Lebenslauf herunterladen',
+        sidebar_show: 'Profil anzeigen',
+        sidebar_hide: 'Profil ausblenden',
+        profile_cv: 'Lebenslauf',
+        cmd_no_results: 'Keine passenden Befehle.',
+        seo_title: 'Portfolio von Martin Pentito',
+        seo_description: 'Technisches Portfolio von Martin Pentito: Webentwicklung, technischer Support und reale Projekte.',
+        print_pdf: 'Drucken / PDF',
+        project_type_github: 'Open-Source-Projekt · GitHub Pages',
+        project_no_description: 'Offentliches Repository auf GitHub.',
+        years_of_experience: 'Jahre Erfahrung',
+        technologies: 'Technologien',
+        github_projects: 'Projekte'
+    },
+    ja: {
+        page_title_suffix: 'Portfolio',
+        theme_title: 'theme:',
+        language_title: 'lang:',
+        theme_aria: 'Visual Studio Code風テーマ',
+        lang_aria: 'Webサイトの言語',
+        nav_aria: 'ポートフォリオのセクション',
+        boot_loading_modules: 'モジュールを読み込み中...',
+        boot_fetching_profile: 'プロフィールデータを取得中...',
+        boot_connecting_github: 'GitHub API に接続中...',
+        boot_ready: '準備完了',
+        section_profile: 'PROFILE',
+        section_stack: 'STACK',
+        section_stats: 'STATS',
+        section_experience: 'EXPERIENCE',
+        section_education: 'EDUCATION',
+        section_services: 'SERVICES',
+        section_projects: 'PROJECTS',
+        stack_languages: '言語と技術',
+        stack_platforms: 'プラットフォーム',
+        stack_tools: 'ツール',
+        stack_links: 'リンク',
+        stats_metrics: '指標',
+        exp_history: '職務経歴',
+        edu_history: '学歴',
+        services_offered: '提供サービス',
+        projects_none: 'プロジェクトが見つかりません',
+        projects_public: '公開プロジェクト',
+        case_problem: '課題',
+        case_solution: '解決策',
+        case_result: '結果',
+        link_live: '_live ↗',
+        link_repo: '_repo ↗',
+        media_title: 'media:',
+        copied_to_clipboard: 'クリップボードにコピーしました',
+        copy_error: 'コピーできませんでした:',
+        status_lines: '行',
+        load_error_console: 'ポートフォリオの読み込みエラー:',
+        load_error_ui: 'ポートフォリオを読み込めませんでした',
+        load_error_hint: ' data.json を読み込むため、Live Server かローカルサーバーで開いてください。',
+        data_error: 'data.json を読み込めませんでした',
+        projects_search_placeholder: 'プロジェクトや技術を検索...',
+        projects_all_types: 'すべてのタイプ',
+        projects_all_tech: 'すべての技術',
+        projects_matches: '件',
+        projects_no_match: '現在のフィルターに一致するプロジェクトがありません。',
+        cmd_placeholder: 'コマンドを入力...',
+        cmd_open_palette: 'コマンドパレットを開く',
+        cmd_theme_next: '次のテーマに切り替え',
+        cmd_lang_next: '次の言語に切り替え',
+        cmd_go_section: '移動先',
+        cmd_copy_email: 'メールをコピー',
+        cmd_download_cv: '履歴書をダウンロード',
+        sidebar_show: 'プロフィールを表示',
+        sidebar_hide: 'プロフィールを非表示',
+        profile_cv: '履歴書',
+        cmd_no_results: '一致するコマンドがありません。',
+        seo_title: 'Martin Pentito のポートフォリオ',
+        seo_description: 'Martin Pentito の技術ポートフォリオ。Web開発、技術サポート、実案件。',
+        print_pdf: '印刷 / PDF',
+        project_type_github: 'オープンソース · GitHub Pages',
+        project_no_description: 'GitHubの公開リポジトリ。',
+        years_of_experience: '経験年数',
+        technologies: '技術',
+        github_projects: 'プロジェクト'
+    }
+};
+
+const appState = {
+    data: null,
+    repos: [],
+    projectFilters: {
+        query: '',
+        type: '',
+        tech: ''
+    },
+    commandEntries: [],
+    commandIndex: 0,
+    commandOpen: false,
+    lastActiveElement: null,
+    mobileSidebarResizeBound: false
+};
+
+let currentLang = DEFAULT_LANG;
+
+const VS_CODE_THEMES = {
+    'vscode-dark-plus': {
+        colorScheme: 'dark',
+        themeColor: '#1e1e1e',
+        vars: {
+            '--bg-main': '#1e1e1e',
+            '--bg-panel': '#252526',
+            '--bg-card': '#2d2d30',
+            '--border': '#3e3e42',
+            '--text-main': '#d4d4d4',
+            '--text-muted': '#858585',
+            '--accent': '#4ade80',
+            '--accent-strong': '#86efac',
+            '--comment': '#6a9955',
+            '--keyword': '#569cd6',
+            '--string': '#ce9178',
+            '--number': '#b5cea8',
+            '--function': '#dcdcaa',
+            '--accent-rgb': '74, 222, 128',
+            '--accent-strong-rgb': '134, 239, 172',
+            '--keyword-rgb': '86, 156, 214',
+            '--statusbar-bg': '#0e639c',
+            '--statusbar-text': '#ffffff'
+        }
+    },
+    'vscode-monokai': {
+        colorScheme: 'dark',
+        themeColor: '#272822',
+        vars: {
+            '--bg-main': '#272822',
+            '--bg-panel': '#2d2e27',
+            '--bg-card': '#32332c',
+            '--border': '#49483e',
+            '--text-main': '#f8f8f2',
+            '--text-muted': '#a59f85',
+            '--accent': '#a6e22e',
+            '--accent-strong': '#e6db74',
+            '--comment': '#75715e',
+            '--keyword': '#f92672',
+            '--string': '#e6db74',
+            '--number': '#ae81ff',
+            '--function': '#66d9ef',
+            '--accent-rgb': '166, 226, 46',
+            '--accent-strong-rgb': '230, 219, 116',
+            '--keyword-rgb': '249, 38, 114',
+            '--statusbar-bg': '#5b5c55',
+            '--statusbar-text': '#ffffff'
+        }
+    },
+    'vscode-abyss': {
+        colorScheme: 'dark',
+        themeColor: '#000c18',
+        vars: {
+            '--bg-main': '#000c18',
+            '--bg-panel': '#001221',
+            '--bg-card': '#001a2f',
+            '--border': '#00314f',
+            '--text-main': '#c7e7ff',
+            '--text-muted': '#6ca6cd',
+            '--accent': '#00a6ff',
+            '--accent-strong': '#48c6ff',
+            '--comment': '#4c93c3',
+            '--keyword': '#ff9d00',
+            '--string': '#8bd649',
+            '--number': '#ff628c',
+            '--function': '#ffd866',
+            '--accent-rgb': '0, 166, 255',
+            '--accent-strong-rgb': '72, 198, 255',
+            '--keyword-rgb': '255, 157, 0',
+            '--statusbar-bg': '#0078d4',
+            '--statusbar-text': '#ffffff'
+        }
+    }
+};
 
 // ─── Tech Icon Map (Boxicons) ───────────────────────────────────────────────────
 const TECH_ICON_MAP = {
@@ -35,9 +407,236 @@ const stateElements = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    initializeLanguageSwitcher();
+    initializeThemeSwitcher();
+    initializeCommandPalette();
     initializeProfileImageFallback();
+    initializeMobileSidebarToggle();
     loadPortfolio();
 });
+
+function initializeLanguageSwitcher() {
+    const langButtonsContainer = document.getElementById('lang-buttons');
+    if (!langButtonsContainer) return;
+
+    langButtonsContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('.lang-btn');
+        if (!button) return;
+        const nextLang = button.dataset.lang;
+        setLanguage(nextLang);
+    });
+
+    const savedLang = getSavedLanguage();
+    const initialLang = SUPPORTED_LANGS.includes(savedLang) ? savedLang : DEFAULT_LANG;
+    setLanguage(initialLang, { persist: false, rerender: false });
+}
+
+function setLanguage(lang, options = {}) {
+    const { persist = true, rerender = true } = options;
+    currentLang = SUPPORTED_LANGS.includes(lang) ? lang : DEFAULT_LANG;
+
+    updateLanguageButtons();
+    applyLanguageMetadata();
+
+    if (persist) {
+        saveLanguage(currentLang);
+    }
+
+    if (rerender && appState.data) {
+        renderPortfolio(appState.data, appState.repos);
+    }
+}
+
+function getSavedLanguage() {
+    try {
+        return localStorage.getItem(LANG_STORAGE_KEY);
+    } catch (error) {
+        return null;
+    }
+}
+
+function saveLanguage(lang) {
+    try {
+        localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch (error) {
+        // Ignore storage errors (private mode / blocked storage)
+    }
+}
+
+function updateLanguageButtons() {
+    document.querySelectorAll('.lang-btn').forEach((button) => {
+        const isActive = button.dataset.lang === currentLang;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+}
+
+function applyLanguageMetadata() {
+    document.documentElement.setAttribute('lang', currentLang);
+
+    const themeSwitcher = document.querySelector('.theme-switcher');
+    if (themeSwitcher) {
+        themeSwitcher.setAttribute('aria-label', t('theme_aria'));
+    }
+    const langSwitcher = document.getElementById('lang-switcher');
+    if (langSwitcher) {
+        langSwitcher.setAttribute('aria-label', t('lang_aria'));
+    }
+    const sectionNav = document.getElementById('section-nav');
+    if (sectionNav) {
+        sectionNav.setAttribute('aria-label', t('nav_aria'));
+    }
+
+    const themeTitle = document.querySelector('.theme-switcher-title');
+    if (themeTitle) themeTitle.textContent = t('theme_title');
+    const langTitle = document.querySelector('.lang-switcher-title');
+    if (langTitle) langTitle.textContent = t('language_title');
+
+    const commandPalette = document.getElementById('command-palette');
+    if (commandPalette) {
+        commandPalette.setAttribute('aria-label', t('cmd_open_palette'));
+    }
+    const commandInput = document.getElementById('command-input');
+    if (commandInput) {
+        commandInput.setAttribute('placeholder', t('cmd_placeholder'));
+        commandInput.setAttribute('aria-label', t('cmd_open_palette'));
+    }
+
+    updateMobileSidebarToggleLabel();
+}
+
+function isMobileViewport() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function getSavedMobileSidebarCollapsed() {
+    try {
+        return localStorage.getItem(MOBILE_SIDEBAR_STORAGE_KEY) === '1';
+    } catch (error) {
+        return true;
+    }
+}
+
+function saveMobileSidebarCollapsed(collapsed) {
+    try {
+        localStorage.setItem(MOBILE_SIDEBAR_STORAGE_KEY, collapsed ? '1' : '0');
+    } catch (error) {
+        // Ignore storage errors (private mode / blocked storage)
+    }
+}
+
+function updateMobileSidebarToggleLabel() {
+    const toggle = document.getElementById('sidebar-toggle');
+    if (!toggle) return;
+
+    const collapsed = document.body.classList.contains('mobile-sidebar-collapsed');
+    toggle.textContent = collapsed ? `▸ ${t('sidebar_show')}` : `▾ ${t('sidebar_hide')}`;
+    toggle.setAttribute('aria-label', collapsed ? t('sidebar_show') : t('sidebar_hide'));
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+}
+
+function setMobileSidebarCollapsed(collapsed, options = {}) {
+    const { persist = true } = options;
+
+    if (isMobileViewport()) {
+        document.body.classList.toggle('mobile-sidebar-collapsed', collapsed);
+    } else {
+        document.body.classList.remove('mobile-sidebar-collapsed');
+    }
+
+    if (persist) {
+        saveMobileSidebarCollapsed(collapsed);
+    }
+
+    updateMobileSidebarToggleLabel();
+}
+
+function initializeMobileSidebarToggle() {
+    const toggle = document.getElementById('sidebar-toggle');
+    if (!toggle) return;
+
+    const isMobile = isMobileViewport();
+    toggle.hidden = !isMobile;
+
+    const initialCollapsed = isMobile ? getSavedMobileSidebarCollapsed() : false;
+    setMobileSidebarCollapsed(initialCollapsed, { persist: false });
+
+    toggle.onclick = () => {
+        const collapsed = document.body.classList.contains('mobile-sidebar-collapsed');
+        setMobileSidebarCollapsed(!collapsed);
+    };
+
+    if (!appState.mobileSidebarResizeBound) {
+        window.addEventListener('resize', initializeMobileSidebarToggle, { passive: true });
+        appState.mobileSidebarResizeBound = true;
+    }
+}
+
+function initializeThemeSwitcher() {
+    const themeButtonsContainer = document.getElementById('theme-buttons');
+    if (!themeButtonsContainer) return;
+
+    themeButtonsContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('.theme-btn');
+        if (!button) return;
+        const themeName = button.dataset.theme;
+        applyTheme(themeName);
+    });
+
+    const savedTheme = getSavedTheme();
+    const initialTheme = VS_CODE_THEMES[savedTheme] ? savedTheme : DEFAULT_THEME;
+    applyTheme(initialTheme, { persist: false });
+}
+
+function getSavedTheme() {
+    try {
+        return localStorage.getItem(THEME_STORAGE_KEY);
+    } catch (error) {
+        return null;
+    }
+}
+
+function saveTheme(themeName) {
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    } catch (error) {
+        // Ignore storage errors (private mode / blocked storage)
+    }
+}
+
+function applyTheme(themeName, options = {}) {
+    const { persist = true } = options;
+    const selectedTheme = VS_CODE_THEMES[themeName] || VS_CODE_THEMES[DEFAULT_THEME];
+    const appliedThemeName = VS_CODE_THEMES[themeName] ? themeName : DEFAULT_THEME;
+
+    Object.entries(selectedTheme.vars).forEach(([name, value]) => {
+        document.documentElement.style.setProperty(name, value);
+    });
+
+    const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+    if (colorSchemeMeta) {
+        colorSchemeMeta.setAttribute('content', selectedTheme.colorScheme);
+    }
+
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', selectedTheme.themeColor);
+    }
+
+    updateThemeButtons(appliedThemeName);
+
+    if (persist) {
+        saveTheme(appliedThemeName);
+    }
+}
+
+function updateThemeButtons(activeThemeName) {
+    document.querySelectorAll('.theme-btn').forEach((button) => {
+        const isActive = button.dataset.theme === activeThemeName;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+}
 
 async function loadPortfolio() {
     try {
@@ -45,27 +644,46 @@ async function loadPortfolio() {
         const reposPromise = fetchGitHubRepos();
         await animateBootSequence();
         const [data, repos] = await Promise.all([dataPromise, reposPromise.catch(() => [])]);
-        renderPortfolio(data, repos);
+        appState.data = data;
+        appState.repos = repos;
+        renderPortfolio(appState.data, appState.repos);
     } catch (error) {
         showError(error);
-        console.error('Error al cargar el portfolio:', error);
+        console.error(t('load_error_console'), error);
     }
 }
 
 async function fetchData() {
     const response = await fetch('data/data.json', { cache: 'no-store' });
     if (!response.ok) {
-        throw new Error(`No se pudo cargar data.json (${response.status})`);
+        throw new Error(`${t('data_error')} (${response.status})`);
     }
     return response.json();
 }
 
 async function fetchGitHubRepos() {
-    const response = await fetch(
-        `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`
-    );
-    if (!response.ok) throw new Error(`GitHub API error ${response.status}`);
-    return response.json();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    try {
+        const response = await fetch(
+            `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`,
+            { signal: controller.signal }
+        );
+        clearTimeout(timeoutId);
+        if (response.status === 403 || response.status === 429) {
+            console.warn('GitHub API rate limited, continuando sin repos.');
+            return [];
+        }
+        if (!response.ok) throw new Error(`GitHub API error ${response.status}`);
+        return response.json();
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            console.warn('GitHub API timeout, continuando sin repos.');
+            return [];
+        }
+        throw error;
+    }
 }
 
 function getPublicRepos(repos) {
@@ -78,10 +696,10 @@ async function animateBootSequence() {
 
     const messages = [
         { text: '$ python portfolio.py',       cls: 'boot-line' },
-        { text: 'Loading modules...',           cls: 'boot-line' },
-        { text: 'Fetching profile data...',     cls: 'boot-line' },
-        { text: 'Connecting to GitHub API...',  cls: 'boot-line' },
-        { text: '\u2713  Ready',               cls: 'boot-line done' }
+        { text: t('boot_loading_modules'),      cls: 'boot-line' },
+        { text: t('boot_fetching_profile'),     cls: 'boot-line' },
+        { text: t('boot_connecting_github'),    cls: 'boot-line' },
+        { text: `\u2713  ${t('boot_ready')}`,  cls: 'boot-line done' }
     ];
 
     for (const { text, cls } of messages) {
@@ -105,20 +723,26 @@ function sleep(ms) {
 }
 
 function renderPortfolio(data, repos = []) {
-    document.title = `${data.personal.name} - Portfolio`;
-    stateElements.profileImage.alt = data.personal.name;
-    stateElements.profileImage.src = data.personal.photo || 'profile.jpg';
-    stateElements.profileFallback.textContent = getInitials(data.personal.name);
+    const localizedData = localizeDeep(data);
 
-    stateElements.sidebar.innerHTML = buildSidebar(data);
-    stateElements.main.innerHTML = buildMainContent(data, repos);
+    stateElements.profileImage.alt = localizedData.personal.name;
+    stateElements.profileImage.src = localizedData.personal.photo || 'profile.jpg';
+    stateElements.profileFallback.textContent = getInitials(localizedData.personal.name);
+
+    stateElements.sidebar.innerHTML = buildSidebar(localizedData);
+    stateElements.main.innerHTML = buildMainContent(localizedData, repos);
     stateElements.loading.hidden = true;
     stateElements.main.hidden = false;
+
+    applyLanguageMetadata();
+    updateSeo(localizedData);
 
     animateCodeLines();
     initStatusBar();
     initializeInteractions();
-    startTypingAnimation(data);
+    initializeMobileSidebarToggle();
+    initScrollAnimations();
+    startTypingAnimation(localizedData);
     initCounterAnimation();
 }
 
@@ -199,13 +823,13 @@ function initCounterAnimation() {
 function buildMainContent(data, repos = []) {
     const publicRepos = getPublicRepos(repos);
     const sections = [
-        { id: 'profile',    label: 'PROFILE',    lines: buildProfileLines(data) },
-        { id: 'stack',      label: 'STACK',      lines: buildStackLines(data) },
-        { id: 'stats',      label: 'STATS',      lines: buildStatsLines(data, publicRepos) },
-        { id: 'experience', label: 'EXPERIENCE', lines: buildExperienceLines(data) },
-        { id: 'education',  label: 'EDUCATION',  lines: buildEducationLines(data) },
-        { id: 'services',   label: 'SERVICES',   lines: buildServicesLines(data) },
-        { id: 'projects',   label: 'PROJECTS',   lines: buildProjectsLines(data, publicRepos) }
+        { id: 'profile',    label: getSectionLabel('profile'),    lines: buildProfileLines(data) },
+        { id: 'stack',      label: getSectionLabel('stack'),      lines: buildStackLines(data) },
+        { id: 'stats',      label: getSectionLabel('stats'),      lines: buildStatsLines(data, publicRepos) },
+        { id: 'experience', label: getSectionLabel('experience'), lines: buildExperienceLines(data) },
+        { id: 'education',  label: getSectionLabel('education'),  lines: buildEducationLines(data) },
+        { id: 'services',   label: getSectionLabel('services'),   lines: buildServicesLines(data) },
+        { id: 'projects',   label: getSectionLabel('projects'),   lines: buildProjectsLines(data, publicRepos) }
     ];
 
     stateElements.sectionNav.innerHTML = sections
@@ -232,7 +856,11 @@ function buildProfileLines(data) {
     }
 
     if (data.personal.email) {
-        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">EMAIL</span> <span class="operator">=</span> <span class="string copyable" data-copy="${escapeAttribute(data.personal.email)}">"${escapeHtml(data.personal.email)}"</span>`));
+        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">EMAIL</span> <span class="operator">=</span> <span class="string copyable" role="button" tabindex="0" data-copy="${escapeAttribute(data.personal.email)}" title="${escapeHtml(t('copied_to_clipboard'))}" aria-label="${escapeHtml(data.personal.email)}">"${escapeHtml(data.personal.email)}"</span> <a class="inline-mailto" href="mailto:${escapeAttribute(data.personal.email)}" title="Abrir cliente de correo" aria-label="Enviar email">&#9993;</a>`));
+    }
+
+    if (data.personal.cv) {
+        lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">${escapeHtml(t('profile_cv'))}</span> <span class="operator">=</span> <a class="string entry-link" href="${escapeAttribute(data.personal.cv)}" download aria-label="${escapeHtml(t('cmd_download_cv'))}">"${escapeHtml(t('cmd_download_cv'))} ↓"</a>`));
     }
 
     if (data.profile && data.profile.length) {
@@ -260,7 +888,7 @@ function buildStackLines(data) {
 
     if (data.techStack && data.techStack.length) {
         lines.push(blankLine());
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Lenguajes y tecnologías'));
+        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('stack_languages'))}`));
         const tech = data.techStack.map(t => `<span class="string">"${escapeHtml(t)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">tech_stack</span> <span class="operator">=</span> <span class="bracket">[</span>${tech}<span class="bracket">]</span>`));
         lines.push(skillGridLine(data.techStack));
@@ -268,7 +896,7 @@ function buildStackLines(data) {
 
     if (data.platforms && data.platforms.length) {
         lines.push(blankLine());
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Plataformas'));
+        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('stack_platforms'))}`));
         const plat = data.platforms.map(p => `<span class="string">"${escapeHtml(p)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">platforms</span> <span class="operator">=</span> <span class="bracket">[</span>${plat}<span class="bracket">]</span>`));
         lines.push(skillGridLine(data.platforms));
@@ -276,7 +904,7 @@ function buildStackLines(data) {
 
     if (data.tools && data.tools.length) {
         lines.push(blankLine());
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Herramientas'));
+        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('stack_tools'))}`));
         const tools = data.tools.map(t => `<span class="string">"${escapeHtml(t)}"</span>`).join('<span class="operator">, </span>');
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">tools</span> <span class="operator">=</span> <span class="bracket">[</span>${tools}<span class="bracket">]</span>`));
         lines.push(skillGridLine(data.tools));
@@ -284,7 +912,7 @@ function buildStackLines(data) {
 
     if (data.media && data.media.length) {
         lines.push(blankLine());
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Links'));
+        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('stack_links'))}`));
         lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;<span class="property">links</span> <span class="operator">=</span> <span class="bracket">{</span>`));
         data.media.forEach((item) => {
             lines.push(codeLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"${escapeHtml(item.label)}"</span><span class="operator">:</span> <a class="string" href="${escapeAttribute(item.url)}" target="_blank" rel="noreferrer">"${escapeHtml(item.url)}"</a><span class="operator">,</span>`));
@@ -300,7 +928,7 @@ function buildStatsLines(data, repos = []) {
     lines.push(blankLine());
     lines.push(codeLine('<span class="keyword">class</span> <span class="class-name">Stats</span><span class="operator">:</span>'));
     lines.push(blankLine());
-    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Métricas'));
+    lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('stats_metrics'))}`));
     lines.push(blankLine());
 
     const yearsExp = new Date().getFullYear() - 2020;
@@ -326,7 +954,7 @@ function buildExperienceLines(data) {
     if (!data.experience || !data.experience.length) return lines;
 
     lines.push(blankLine());
-    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Historial laboral'));
+    lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('exp_history'))}`));
 
     const cards = data.experience.map(job => `<div class="entry-card">
             <div class="entry-header">
@@ -350,7 +978,7 @@ function buildEducationLines(data) {
     if (!data.education || !data.education.length) return lines;
 
     lines.push(blankLine());
-    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Formación académica'));
+    lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('edu_history'))}`));
 
     const cards = data.education.map(edu => `<div class="entry-card">
             <div class="entry-header">
@@ -374,7 +1002,7 @@ function buildServicesLines(data) {
     if (!data.services || !data.services.length) return lines;
 
     lines.push(blankLine());
-    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Servicios ofrecidos'));
+    lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('services_offered'))}`));
 
     const cards = data.services.map(service => `<div class="entry-card">
             <div class="entry-title">${escapeHtml(service.title)}</div>
@@ -392,51 +1020,127 @@ function buildProjectsLines(data, repos = []) {
     lines.push(codeLine('<span class="keyword">class</span> <span class="class-name">Projects</span><span class="operator">:</span>'));
     lines.push(blankLine());
 
-    const projects = repos.length > 0
-        ? repos.map(r => ({
-            name: r.name,
-            description: r.description || '',
-            type: 'GitHub · GitHub Pages',
-            stack: r.topics || [],
-            url: r.homepage || `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/`,
-            repoUrl: r.html_url,
-            updated: r.updated_at
-        }))
-        : (data.projects || []);
+    const manualProjects = data.projects || [];
+    const githubProjects = repos.map((r) => ({
+        name: r.name,
+        description: r.description || t('project_no_description'),
+        type: t('project_type_github'),
+        stack: r.topics || [],
+        url: r.homepage || `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/`,
+        repoUrl: r.html_url,
+        updated: r.updated_at
+    }));
+    const projects = mergeProjects(manualProjects, githubProjects);
 
     if (!projects.length) {
-        lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# No se encontraron proyectos'));
+        lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('projects_none'))}`));
         return lines;
     }
 
-    lines.push(commentLine('&nbsp;&nbsp;&nbsp;&nbsp;# Proyectos públicos'));
+    lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('projects_public'))}`));
+    lines.push(buildProjectControlsLine(projects));
 
-    const cards = projects.map(project => {
+    const cards = projects.map((project) => {
         const date = project.updated
-            ? new Date(project.updated).toLocaleDateString('es-AR', { year: 'numeric', month: 'short', day: 'numeric' })
+            ? new Date(project.updated).toLocaleDateString(getCurrentLocale(), { year: 'numeric', month: 'short', day: 'numeric' })
             : '';
+        const roleAndDuration = [project.role, project.duration].filter(Boolean).join(' · ');
+        const caseStudy = [
+            buildCaseStudyRow(t('case_problem'), project.challenge),
+            buildCaseStudyRow(t('case_solution'), project.solution),
+            buildCaseStudyRow(t('case_result'), project.result)
+        ].filter(Boolean).join('');
         const tags = project.stack && project.stack.length
-            ? `<div class="entry-tags">${project.stack.map(t => `<span class="entry-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+            ? `<div class="entry-tags">${project.stack.map((item) => `<span class="entry-tag">${escapeHtml(item)}</span>`).join('')}</div>`
             : '';
         const links = [
-            project.url ? `<a class="entry-link" href="${escapeAttribute(project.url)}" target="_blank" rel="noreferrer">_live ↗</a>` : '',
-            project.repoUrl ? `<a class="entry-link" href="${escapeAttribute(project.repoUrl)}" target="_blank" rel="noreferrer">_repo ↗</a>` : ''
+            project.url ? `<a class="entry-link" href="${escapeAttribute(project.url)}" target="_blank" rel="noreferrer">${escapeHtml(t('link_live'))}</a>` : '',
+            project.repoUrl ? `<a class="entry-link" href="${escapeAttribute(project.repoUrl)}" target="_blank" rel="noreferrer">${escapeHtml(t('link_repo'))}</a>` : ''
         ].filter(Boolean).join('');
-        return `<div class="entry-card">
+
+        const searchBlob = normalizeSearchText([
+            project.name,
+            project.description,
+            project.type,
+            project.role,
+            project.challenge,
+            project.solution,
+            project.result,
+            ...(project.stack || [])
+        ].filter(Boolean).join(' '));
+        const normalizedType = normalizeSearchText(project.type || '');
+        const normalizedStack = normalizeSearchText((project.stack || []).join('|'));
+
+        return `<div class="entry-card project-card" data-project-search="${escapeAttribute(searchBlob)}" data-project-type="${escapeAttribute(normalizedType)}" data-project-stack="${escapeAttribute(normalizedStack)}">
             <div class="entry-header">
                 <span class="entry-title">${escapeHtml(project.name)}</span>
                 ${date ? `<span class="entry-period">${date}</span>` : ''}
             </div>
             ${project.type ? `<div class="entry-meta">${escapeHtml(project.type)}</div>` : ''}
+            ${roleAndDuration ? `<div class="entry-context">${escapeHtml(roleAndDuration)}</div>` : ''}
             ${project.description ? `<div class="entry-desc">"${escapeHtml(project.description)}"</div>` : ''}
+            ${caseStudy ? `<div class="case-study">${caseStudy}</div>` : ''}
             ${tags}
             ${links ? `<div class="entry-links">${links}</div>` : ''}
         </div>`;
     }).join('');
 
     lines.push(cardGridLine(cards));
+    lines.push(codeLine(`<span class="comment project-filter-empty" id="project-filter-empty" hidden>&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('projects_no_match'))}</span>`));
 
     return lines;
+}
+
+function buildProjectControlsLine(projects = []) {
+    const typeOptions = Array.from(new Set(projects.map((project) => project.type).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
+    const techOptions = Array.from(new Set(projects.flatMap((project) => project.stack || []).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
+
+    const typeOptionsHtml = [`<option value="">${escapeHtml(t('projects_all_types'))}</option>`]
+        .concat(typeOptions.map((value) => {
+            const normalized = normalizeSearchText(value);
+            const selected = appState.projectFilters.type === normalized ? ' selected' : '';
+            return `<option value="${escapeAttribute(normalized)}"${selected}>${escapeHtml(value)}</option>`;
+        }))
+        .join('');
+
+    const techOptionsHtml = [`<option value="">${escapeHtml(t('projects_all_tech'))}</option>`]
+        .concat(techOptions.map((value) => {
+            const normalized = normalizeSearchText(value);
+            const selected = appState.projectFilters.tech === normalized ? ' selected' : '';
+            return `<option value="${escapeAttribute(normalized)}"${selected}>${escapeHtml(value)}</option>`;
+        }))
+        .join('');
+
+    const searchValue = escapeAttribute(appState.projectFilters.query || '');
+
+    return `<div class="code-line project-controls-line"><div class="line-number"></div><div class="code"><div class="project-controls"><input class="project-search" id="project-search" type="search" placeholder="${escapeAttribute(t('projects_search_placeholder'))}" value="${searchValue}" aria-label="${escapeAttribute(t('projects_search_placeholder'))}"><select class="project-select" id="project-type">${typeOptionsHtml}</select><select class="project-select" id="project-tech">${techOptionsHtml}</select><span class="project-results" id="project-results"></span></div></div></div>`;
+}
+
+function buildCaseStudyRow(label, value) {
+    if (!value) return '';
+    return `<div class="case-study-row"><span class="case-study-label">${escapeHtml(label)}:</span><span class="case-study-text">${escapeHtml(value)}</span></div>`;
+}
+
+function mergeProjects(manualProjects = [], githubProjects = []) {
+    const byKey = new Map();
+
+    githubProjects.forEach((project) => {
+        byKey.set(getProjectMergeKey(project), project);
+    });
+
+    manualProjects.forEach((project) => {
+        const key = getProjectMergeKey(project);
+        const existing = byKey.get(key);
+        byKey.set(key, { ...existing, ...project });
+    });
+
+    return Array.from(byKey.values());
+}
+
+function getProjectMergeKey(project = {}) {
+    return (project.name || project.url || project.repoUrl || '')
+        .toLowerCase()
+        .trim();
 }
 
 const MEDIA_ICONS = {
@@ -464,7 +1168,7 @@ function createMediaSection(media = []) {
         return `<div class="enum-item"><a class="media-link" href="${url}" target="_blank" rel="noreferrer">${icon}<span>${label}</span></a></div>`;
     }).join('');
 
-    return `<div class="section"><div class="section-title">media:</div><div class="enum-content">${content}</div></div>`;
+    return `<div class="section"><div class="section-title">${escapeHtml(t('media_title'))}</div><div class="enum-content">${content}</div></div>`;
 }
 
 function codeLine(content) {
@@ -485,7 +1189,7 @@ function statGridLine(stats) {
         `<div class="stat-card">
             <i class="${icon} stat-icon"></i>
             <span class="stat-number" data-count-to="${value}">0</span>
-            <span class="stat-label">${escapeHtml(label)}</span>
+            <span class="stat-label">${escapeHtml(t(label))}</span>
         </div>`
     ).join('');
     return `<div class="code-line stat-grid-line"><div class="line-number"></div><div class="code stat-grid">${cards}</div></div>`;
@@ -503,6 +1207,28 @@ function cardGridLine(cardsHtml) {
     return `<div class="code-line card-grid-line"><div class="line-number"></div><div class="code card-grid">${cardsHtml}</div></div>`;
 }
 
+function initScrollAnimations() {
+    const sections = document.querySelectorAll('.code-section');
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.08 }
+    );
+
+    sections.forEach((section) => {
+        section.classList.add('animate-in');
+        observer.observe(section);
+    });
+}
+
 function animateCodeLines() {
     const lines = document.querySelectorAll('.code-line');
 
@@ -513,7 +1239,7 @@ function animateCodeLines() {
         }
 
         line.style.opacity = '0';
-        line.style.animation = `slideIn 0.35s ease-out ${index * 0.02}s forwards`;
+        line.style.animation = `slideIn 0.3s ease-out ${index * 0.008}s forwards`;
     });
 
     const lastContentLine = Array.from(lines).reverse()
@@ -528,15 +1254,24 @@ function animateCodeLines() {
 
 function initializeInteractions() {
     document.querySelectorAll('[data-copy]').forEach((element) => {
-        element.addEventListener('click', async () => {
+        const doCopy = async (event) => {
+            event.preventDefault();
             try {
                 await navigator.clipboard.writeText(element.dataset.copy);
-                showToast('Dato copiado al portapapeles');
+                showToast(t('copied_to_clipboard'));
             } catch (error) {
-                console.error('No se pudo copiar el dato:', error);
+                console.error(t('copy_error'), error);
+            }
+        };
+        element.addEventListener('click', doCopy);
+        element.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                doCopy(event);
             }
         });
     });
+
+    initializeProjectFilters();
 
     const mainContent = document.querySelector('.main-content');
     const tabs = document.querySelectorAll('.nav-tab');
@@ -586,17 +1321,310 @@ function initializeInteractions() {
             }
         }
         tabs.forEach(tab => {
-            tab.classList.toggle('active', tab.getAttribute('href') === `#${activeId}`);
+            const isActive = tab.getAttribute('href') === `#${activeId}`;
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-current', isActive ? 'page' : 'false');
         });
         const sbSection = document.getElementById('sb-section');
         if (sbSection && activeId) {
-            sbSection.textContent = activeId.toUpperCase();
+            sbSection.textContent = getSectionLabel(activeId);
         }
     }
 
-    mainContent.addEventListener('scroll', updateActiveTab);
+    mainContent.addEventListener('scroll', updateActiveTab, { passive: true });
     window.addEventListener('scroll', updateActiveTab, { passive: true });
     updateActiveTab();
+}
+
+function initializeProjectFilters() {
+    const searchInput = document.getElementById('project-search');
+    const typeSelect = document.getElementById('project-type');
+    const techSelect = document.getElementById('project-tech');
+    const cards = Array.from(document.querySelectorAll('.project-card'));
+    const results = document.getElementById('project-results');
+    const emptyState = document.getElementById('project-filter-empty');
+
+    if (!searchInput || !typeSelect || !techSelect || !cards.length) {
+        return;
+    }
+
+    const savedFilters = JSON.parse(localStorage.getItem('portfolio-filters') || 'null');
+    if (savedFilters) {
+        searchInput.value = savedFilters.rawQuery || '';
+        typeSelect.value = savedFilters.type || '';
+        techSelect.value = savedFilters.tech || '';
+        appState.projectFilters.query = normalizeSearchText(savedFilters.rawQuery || '');
+        appState.projectFilters.type = savedFilters.type || '';
+        appState.projectFilters.tech = savedFilters.tech || '';
+    }
+
+    const applyFilters = () => {
+        appState.projectFilters.query = normalizeSearchText(searchInput.value || '');
+        appState.projectFilters.type = typeSelect.value || '';
+        appState.projectFilters.tech = techSelect.value || '';
+
+        localStorage.setItem('portfolio-filters', JSON.stringify({
+            rawQuery: searchInput.value || '',
+            type: appState.projectFilters.type,
+            tech: appState.projectFilters.tech
+        }));
+
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+            const queryMatches = !appState.projectFilters.query || (card.dataset.projectSearch || '').includes(appState.projectFilters.query);
+            const typeMatches = !appState.projectFilters.type || card.dataset.projectType === appState.projectFilters.type;
+            const techMatches = !appState.projectFilters.tech || (card.dataset.projectStack || '').includes(appState.projectFilters.tech);
+            const visible = queryMatches && typeMatches && techMatches;
+
+            card.hidden = !visible;
+            if (visible) visibleCount += 1;
+        });
+
+        if (results) {
+            results.textContent = `${visibleCount} ${t('projects_matches')}`;
+        }
+        if (emptyState) {
+            emptyState.hidden = visibleCount !== 0;
+        }
+    };
+
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(applyFilters, 250);
+    });
+    typeSelect.addEventListener('change', applyFilters);
+    techSelect.addEventListener('change', applyFilters);
+
+    applyFilters();
+}
+
+function initializeCommandPalette() {
+    const overlay = document.getElementById('command-overlay');
+    const palette = document.getElementById('command-palette');
+    const input = document.getElementById('command-input');
+    const list = document.getElementById('command-list');
+
+    if (!overlay || !palette || !input || !list) {
+        return;
+    }
+
+    document.addEventListener('keydown', (event) => {
+        const isOpenShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+
+        if (isOpenShortcut) {
+            event.preventDefault();
+            openCommandPalette();
+            return;
+        }
+
+        if (!appState.commandOpen) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeCommandPalette();
+        }
+    });
+
+    overlay.addEventListener('click', closeCommandPalette);
+
+    input.addEventListener('input', () => {
+        appState.commandIndex = 0;
+        renderCommandEntries();
+    });
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            const maxIndex = Math.max(appState.commandEntries.length - 1, 0);
+            appState.commandIndex = Math.min(appState.commandIndex + 1, maxIndex);
+            renderCommandEntries();
+            return;
+        }
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            appState.commandIndex = Math.max(appState.commandIndex - 1, 0);
+            renderCommandEntries();
+            return;
+        }
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const entry = appState.commandEntries[appState.commandIndex];
+            if (entry) {
+                entry.action();
+                closeCommandPalette();
+            }
+        }
+    });
+
+    list.addEventListener('click', (event) => {
+        const item = event.target.closest('.command-item');
+        if (!item) return;
+        const index = Number(item.dataset.index);
+        const entry = appState.commandEntries[index];
+        if (!entry) return;
+        entry.action();
+        closeCommandPalette();
+    });
+}
+
+function openCommandPalette() {
+    const overlay = document.getElementById('command-overlay');
+    const palette = document.getElementById('command-palette');
+    const input = document.getElementById('command-input');
+
+    if (!overlay || !palette || !input) {
+        return;
+    }
+
+    appState.lastActiveElement = document.activeElement;
+    appState.commandOpen = true;
+    appState.commandIndex = 0;
+
+    overlay.hidden = false;
+    palette.hidden = false;
+
+    input.value = '';
+    input.focus();
+
+    renderCommandEntries();
+}
+
+function closeCommandPalette() {
+    const overlay = document.getElementById('command-overlay');
+    const palette = document.getElementById('command-palette');
+
+    if (!overlay || !palette) {
+        return;
+    }
+
+    appState.commandOpen = false;
+    palette.classList.add('closing');
+    palette.addEventListener('animationend', () => {
+        palette.classList.remove('closing');
+        overlay.hidden = true;
+        palette.hidden = true;
+        if (appState.lastActiveElement && typeof appState.lastActiveElement.focus === 'function') {
+            appState.lastActiveElement.focus();
+            appState.lastActiveElement = null;
+        }
+    }, { once: true });
+}
+
+function getCommandEntries() {
+    const sectionIds = ['profile', 'stack', 'stats', 'experience', 'education', 'services', 'projects'];
+    const entries = sectionIds.map((sectionId) => ({
+        label: `${t('cmd_go_section')} ${getSectionLabel(sectionId)}`,
+        keywords: `go section ${sectionId} ${getSectionLabel(sectionId)}`,
+        action: () => scrollToSection(sectionId)
+    }));
+
+    entries.push({
+        label: t('cmd_theme_next'),
+        keywords: 'theme color',
+        action: cycleTheme
+    });
+
+    entries.push({
+        label: t('cmd_lang_next'),
+        keywords: 'language idioma sprache',
+        action: cycleLanguage
+    });
+
+    entries.push({
+        label: t('cmd_copy_email'),
+        keywords: 'email copy clipboard',
+        action: async () => {
+            const localizedData = appState.data ? localizeDeep(appState.data) : null;
+            const email = localizedData?.personal?.email;
+            if (!email) return;
+            await navigator.clipboard.writeText(email);
+            showToast(t('copied_to_clipboard'));
+        }
+    });
+
+    entries.push({
+        label: t('cmd_download_cv'),
+        keywords: 'cv resume download descargar lebenslauf',
+        action: () => {
+            const localizedData = appState.data ? localizeDeep(appState.data) : null;
+            const cv = localizedData?.personal?.cv;
+            if (!cv) return;
+            const a = document.createElement('a');
+            a.href = cv;
+            a.download = '';
+            a.click();
+        }
+    });
+
+    return entries;
+}
+
+function renderCommandEntries() {
+    const list = document.getElementById('command-list');
+    const input = document.getElementById('command-input');
+    if (!list || !input) return;
+
+    const rawEntries = getCommandEntries();
+    const query = normalizeSearchText(input.value || '');
+    const filteredEntries = rawEntries.filter((entry) => {
+        if (!query) return true;
+        const haystack = normalizeSearchText(`${entry.label} ${entry.keywords || ''}`);
+        return haystack.includes(query);
+    });
+
+    appState.commandEntries = filteredEntries;
+
+    if (!filteredEntries.length) {
+        list.innerHTML = `<li class="command-empty">${escapeHtml(t('cmd_no_results'))}</li>`;
+        return;
+    }
+
+    if (appState.commandIndex >= filteredEntries.length) {
+        appState.commandIndex = 0;
+    }
+
+    list.innerHTML = filteredEntries.map((entry, index) => {
+        const activeClass = index === appState.commandIndex ? ' active' : '';
+        return `<li class="command-item${activeClass}" data-index="${index}" role="option" aria-selected="${index === appState.commandIndex}">${escapeHtml(entry.label)}</li>`;
+    }).join('');
+}
+
+function cycleTheme() {
+    const themes = Object.keys(VS_CODE_THEMES);
+    const currentTheme = document.querySelector('.theme-btn.active')?.dataset.theme || DEFAULT_THEME;
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextTheme = themes[(currentIndex + 1) % themes.length];
+    applyTheme(nextTheme);
+}
+
+function cycleLanguage() {
+    const currentIndex = SUPPORTED_LANGS.indexOf(currentLang);
+    const nextLang = SUPPORTED_LANGS[(currentIndex + 1) % SUPPORTED_LANGS.length];
+    setLanguage(nextLang);
+}
+
+function scrollToSection(sectionId) {
+    const target = document.getElementById(sectionId);
+    const mainContent = document.querySelector('.main-content');
+    if (!target || !mainContent) return;
+
+    const offset = target.getBoundingClientRect().top
+        - mainContent.getBoundingClientRect().top
+        + mainContent.scrollTop - 10;
+
+    mainContent.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
+function normalizeSearchText(value = '') {
+    return String(value)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
 }
 
 function initializeProfileImageFallback() {
@@ -607,25 +1635,54 @@ function initializeProfileImageFallback() {
 
 function initStatusBar() {
     const totalLines = document.querySelectorAll('.code-line').length;
+    const isMac = navigator.platform.toUpperCase().includes('MAC');
+    const shortcutKeys = isMac
+        ? '<kbd>⌘</kbd><kbd>K</kbd>'
+        : '<kbd>Ctrl</kbd><kbd>K</kbd>';
     stateElements.statusbar.innerHTML = `
         <div class="statusbar-left">
             <span class="statusbar-item">🐍 Python 3</span>
             <span class="statusbar-item">UTF-8</span>
-            <span class="statusbar-item">${totalLines} lines</span>
+            <span class="statusbar-item">${totalLines} ${escapeHtml(t('status_lines'))}</span>
         </div>
         <div class="statusbar-right">
-            <span class="statusbar-item" id="sb-section">PROFILE</span>
+            <span class="statusbar-item" id="sb-section">${escapeHtml(getSectionLabel('profile'))}</span>
+            <span class="statusbar-item command-hint" id="sb-palette-hint" role="button" tabindex="0" title="${escapeHtml(t('cmd_open_palette'))}">${shortcutKeys}</span>
+            <span class="statusbar-item" id="sb-print" role="button" tabindex="0" title="${escapeHtml(t('print_pdf'))}">⎙</span>
         </div>
     `;
     stateElements.statusbar.hidden = false;
+
+    const hint = document.getElementById('sb-palette-hint');
+    if (hint) {
+        hint.addEventListener('click', openCommandPalette);
+        hint.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openCommandPalette();
+            }
+        });
+    }
+
+    const printBtn = document.getElementById('sb-print');
+    if (printBtn) {
+        printBtn.style.cursor = 'pointer';
+        printBtn.addEventListener('click', () => window.print());
+        printBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    }
 }
 
 function showError(error) {
     const hint = window.location.protocol === 'file:'
-        ? ' Abrilo con Live Server o un servidor local para permitir la carga de data.json.'
+        ? t('load_error_hint')
         : '';
 
-    stateElements.loading.textContent = `No se pudo cargar el portfolio: ${error.message}.${hint}`;
+    stateElements.loading.textContent = `${t('load_error_ui')}: ${error.message}.${hint}`;
 }
 
 function showToast(message) {
@@ -642,6 +1699,85 @@ function showToast(message) {
         toast.classList.remove('visible');
         setTimeout(() => toast.remove(), 200);
     }, 1800);
+}
+
+function updateSeo(localizedData) {
+    const title = `${localizedData.personal.name} - ${t('seo_title')}`;
+    const description = localizedData.summary || t('seo_description');
+
+    document.title = title;
+
+    const setMeta = (selector, value) => {
+        const meta = document.querySelector(selector);
+        if (meta) {
+            meta.setAttribute('content', value);
+        }
+    };
+
+    setMeta('meta[name="description"]', description);
+    setMeta('meta[property="og:title"]', title);
+    setMeta('meta[property="og:description"]', description);
+    setMeta('meta[name="twitter:title"]', title);
+    setMeta('meta[name="twitter:description"]', description);
+
+    const structuredDataNode = document.getElementById('structured-data');
+    if (!structuredDataNode) return;
+
+    const canonicalUrl = document.querySelector('link[rel="canonical"]')?.getAttribute('href') || window.location.href;
+    const image = document.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+    const absoluteImage = image.startsWith('http') ? image : new URL(image, canonicalUrl).toString();
+
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: localizedData.personal.name,
+        jobTitle: localizedData.personal.title,
+        description,
+        url: canonicalUrl,
+        image: absoluteImage,
+        knowsAbout: localizedData.techStack || [],
+        sameAs: (localizedData.media || []).map((item) => item.url).filter(Boolean)
+    };
+
+    structuredDataNode.textContent = JSON.stringify(structuredData);
+}
+
+function t(key) {
+    return I18N[currentLang]?.[key] || I18N.es[key] || key;
+}
+
+function getSectionLabel(sectionId) {
+    return t(`section_${sectionId}`);
+}
+
+function getCurrentLocale() {
+    return LOCALE_BY_LANG[currentLang] || LOCALE_BY_LANG.es;
+}
+
+function isLanguageMap(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        return false;
+    }
+    const keys = Object.keys(value);
+    return keys.length > 0 && keys.every((key) => SUPPORTED_LANGS.includes(key));
+}
+
+function localizeDeep(value) {
+    if (Array.isArray(value)) {
+        return value.map((item) => localizeDeep(item));
+    }
+
+    if (!value || typeof value !== 'object') {
+        return value;
+    }
+
+    if (isLanguageMap(value)) {
+        return value[currentLang] || value.es || Object.values(value)[0] || '';
+    }
+
+    return Object.fromEntries(
+        Object.entries(value).map(([key, nestedValue]) => [key, localizeDeep(nestedValue)])
+    );
 }
 
 function buildStringArray(items = []) {
@@ -679,4 +1815,13 @@ function escapeHtml(value = '') {
 
 function escapeAttribute(value = '') {
     return escapeHtml(value);
+}
+
+// ─── PWA: registro del Service Worker ───────────────────────────────────────
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {
+            // SW no disponible (file:// o privado) — ignorar silenciosamente
+        });
+    });
 }

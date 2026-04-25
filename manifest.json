@@ -1,0 +1,21 @@
+{
+  "name": "Martín Pentito - Portfolio",
+  "short_name": "MP Portfolio",
+  "description": "Portfolio técnico de Martín Pentito — Web Developer, Computer Technician y Composer.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1e1e1e",
+  "theme_color": "#1e1e1e",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "assets/ThisJipi_img_backgroundoff.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "developer", "personal"]
+}

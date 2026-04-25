@@ -1,13 +1,29 @@
 {
   "personal": {
     "name": "Martín Pentito",
-    "title": "Web Developer · Computer Technician · Composer",
-    "focus": "Desarrollo web, automatización y soporte técnico",
+    "title": {
+      "es": "Web Developer · Computer Technician · Composer",
+      "en": "Web Developer · Computer Technician · Composer",
+      "de": "Webentwickler · Computertechniker · Komponist",
+      "ja": "Web開発者 · コンピュータ技術者 · 作曲家"
+    },
+    "focus": {
+      "es": "Desarrollo web, automatización y soporte técnico",
+      "en": "Web development, automation, and technical support",
+      "de": "Webentwicklung, Automatisierung und technischer Support",
+      "ja": "Web開発、自動化、テクニカルサポート"
+    },
     "location": "Argentina",
-    "email": "",
+    "email": "martinepentito@gmail.com",
+    "cv": "assets/MartinPentito_cv.pdf",
     "photo": "assets/ThisJipi_img.png"
   },
-  "summary": "Apasionado por las computadoras y la música. Responsable y autodidacta, características que me definieron desde niño. Siempre en busca de experiencias que me saquen de mi zona de confort. Disfruto del trabajo en equipo mientras haya respeto y empatía.",
+  "summary": {
+    "es": "Apasionado por las computadoras y la música. Responsable y autodidacta, características que me definieron desde niño. Siempre en busca de experiencias que me saquen de mi zona de confort. Disfruto del trabajo en equipo mientras haya respeto y empatía.",
+    "en": "Passionate about computers and music. Responsible and self-taught, traits that have shaped me since childhood. I am always looking for experiences that push me outside my comfort zone. I enjoy teamwork when there is respect and empathy.",
+    "de": "Ich begeistere mich fur Computer und Musik. Verantwortungsbewusst und autodidaktisch - Eigenschaften, die mich seit meiner Kindheit begleiten. Ich suche standig nach Erfahrungen, die mich aus meiner Komfortzone holen. Teamarbeit macht mir Freude, solange Respekt und Empathie vorhanden sind.",
+    "ja": "私はコンピュータと音楽に情熱を持っています。責任感が強く独学で学ぶ姿勢は、幼い頃からの強みです。常にコンフォートゾーンを超える経験を求めています。尊重と共感がある環境でのチームワークを大切にしています。"
+  },
   "platforms": [
     "Windows",
     "Mobile"
@@ -39,139 +55,467 @@
   ],
   "languages": [
     {
-      "name": "Español",
-      "level": "Nativo"
+      "name": {
+        "es": "Español",
+        "en": "Spanish",
+        "de": "Spanisch",
+        "ja": "スペイン語"
+      },
+      "level": {
+        "es": "Nativo",
+        "en": "Native",
+        "de": "Muttersprache",
+        "ja": "ネイティブ"
+      }
     },
     {
-      "name": "Inglés",
-      "level": "Profesional"
+      "name": {
+        "es": "Inglés",
+        "en": "English",
+        "de": "Englisch",
+        "ja": "英語"
+      },
+      "level": {
+        "es": "Básico",
+        "en": "Basic",
+        "de": "Grundkenntnisse",
+        "ja": "基礎"
+      }
     }
   ],
-  "profile": [
-    "Curioso",
-    "Responsable",
-    "Autodidacta",
-    "Empático",
-    "Resiliente",
-    "Social"
-  ],
-  "highlights": [
-    "Desarrollo web con HTML, CSS, JavaScript y Python.",
-    "Técnico en informática con experiencia en soporte y sistemas.",
-    "Gestión de sitios WordPress y tiendas en Tienda Nube.",
-    "Compositor y músico — HippieCave Estudio Musical."
-  ],
+  "profile": {
+    "es": ["Curioso", "Responsable", "Autodidacta", "Empatico", "Resiliente", "Social"],
+    "en": ["Curious", "Responsible", "Self-taught", "Empathetic", "Resilient", "Social"],
+    "de": ["Neugierig", "Verantwortungsbewusst", "Autodidakt", "Empathisch", "Resilient", "Sozial"],
+    "ja": ["好奇心", "責任感", "独学", "共感力", "粘り強さ", "社交性"]
+  },
+  "highlights": {
+    "es": [
+      "Desarrollo web con HTML, CSS, JavaScript y Python.",
+      "Tecnico en informatica con experiencia en soporte y sistemas.",
+      "Gestion de sitios WordPress y tiendas en Tienda Nube.",
+      "Compositor y musico - HippieCave Estudio Musical."
+    ],
+    "en": [
+      "Web development with HTML, CSS, JavaScript, and Python.",
+      "IT technician with experience in support and systems.",
+      "Management of WordPress websites and Tienda Nube stores.",
+      "Composer and musician - HippieCave Music Studio."
+    ],
+    "de": [
+      "Webentwicklung mit HTML, CSS, JavaScript und Python.",
+      "IT-Techniker mit Erfahrung in Support und Systemen.",
+      "Verwaltung von WordPress-Websites und Tienda-Nube-Shops.",
+      "Komponist und Musiker - HippieCave Musikstudio."
+    ],
+    "ja": [
+      "HTML、CSS、JavaScript、PythonによるWeb開発。",
+      "サポートとシステム運用の経験を持つIT技術者。",
+      "WordPressサイトとTienda Nubeストアの運用。",
+      "作曲家・ミュージシャン - HippieCave Music Studio。"
+    ]
+  },
   "experience": [
     {
-      "role": "Técnico / Analista",
+      "role": {
+        "es": "Tecnico / Analista",
+        "en": "Technician / Analyst",
+        "de": "Techniker / Analyst",
+        "ja": "技術者 / アナリスト"
+      },
       "company": "TecBA — Gobierno de la Ciudad de Buenos Aires",
       "period": "2025 - Presente",
-      "description": "Bases de datos, Apache, ejecución de scripts."
+      "description": {
+        "es": "Bases de datos, Apache, ejecucion de scripts.",
+        "en": "Databases, Apache, and script execution.",
+        "de": "Datenbanken, Apache und Skriptausfuhrung.",
+        "ja": "データベース、Apache、スクリプト実行。"
+      }
     },
     {
-      "role": "Web Developer",
+      "role": {
+        "es": "Web Developer",
+        "en": "Web Developer",
+        "de": "Web Developer",
+        "ja": "Web Developer"
+      },
       "company": "GreenOlive / CafeMaceda / Laincop — Olivos del Sur SA",
       "period": "2024 - 2025",
-      "description": "Diseño y programación web con WordPress, gestión de tres sitios y pricing de productos. Data entry y gestión de base de datos en Access. Lanzamiento del sitio Laincop en Tienda Nube con dominio propio."
+      "description": {
+        "es": "Diseno y programacion web con WordPress, gestion de tres sitios y pricing de productos. Data entry y gestion de base de datos en Access. Lanzamiento del sitio Laincop en Tienda Nube con dominio propio.",
+        "en": "Web design and development with WordPress, management of three websites, and product pricing. Data entry and Access database management. Launch of the Laincop store on Tienda Nube with a custom domain.",
+        "de": "Webdesign und Entwicklung mit WordPress, Verwaltung von drei Websites und Produktpreisgestaltung. Dateneingabe und Datenbankverwaltung in Access. Start der Laincop-Website auf Tienda Nube mit eigener Domain.",
+        "ja": "WordPressでのWeb設計・開発、3サイトの運用、商品価格管理を担当。データ入力とAccessデータベース管理も実施。独自ドメインでLaincopのTienda Nubeサイトを公開。"
+      }
     },
     {
-      "role": "Bar Manager",
+      "role": {
+        "es": "Bar Manager",
+        "en": "Bar Manager",
+        "de": "Bar Manager",
+        "ja": "バーマネージャー"
+      },
       "company": "Galpón Plaza — Cervecería S.R.L.",
       "period": "2023 - 2024",
-      "description": "Mozo, bartender, cajero y gestión de proveedores."
+      "description": {
+        "es": "Mozo, bartender, cajero y gestion de proveedores.",
+        "en": "Waiter, bartender, cashier, and supplier management.",
+        "de": "Servicekraft, Barkeeper, Kassierer und Lieferantenmanagement.",
+        "ja": "ホール、バーテンダー、レジ、仕入れ先管理を担当。"
+      }
     },
     {
-      "role": "Systems Analyst",
+      "role": {
+        "es": "Analista de Sistemas",
+        "en": "Systems Analyst",
+        "de": "Systemanalytiker",
+        "ja": "システムアナリスト"
+      },
       "company": "Cerrocred — FINANCOMP S.A.",
       "period": "2021 - 2023",
-      "description": "Análisis y gestión de sistemas internos."
+      "description": {
+        "es": "Analisis y gestion de sistemas internos.",
+        "en": "Analysis and management of internal systems.",
+        "de": "Analyse und Verwaltung interner Systeme.",
+        "ja": "社内システムの分析と管理。"
+      }
     },
     {
-      "role": "Customs Broker Assistance",
+      "role": {
+        "es": "Asistencia a Despachante de Aduana",
+        "en": "Customs Broker Assistance",
+        "de": "Unterstutzung im Zollbereich",
+        "ja": "通関業務アシスタント"
+      },
       "company": "Estudio Vilches",
       "period": "2020 - 2021",
-      "description": "Tareas administrativas, control de bill of lading y servicios de mensajería."
+      "description": {
+        "es": "Tareas administrativas, control de bill of lading y servicios de mensajeria.",
+        "en": "Administrative tasks, bill of lading control, and messenger services.",
+        "de": "Administrative Aufgaben, Kontrolle von Bill of Lading und Kurierdienste.",
+        "ja": "事務作業、船荷証券の管理、メッセンジャー業務。"
+      }
     }
   ],
   "education": [
     {
       "institution": "Udemy",
       "period": "2025",
-      "title": "Computación Completo con Windows",
-      "description": "Paquete Office, Bases de Datos, HTML, Python, Sistemas de Información, Introducción a Diseño Gráfico."
+      "title": {
+        "es": "Computacion Completo con Windows",
+        "en": "Complete Computing with Windows",
+        "de": "Umfassender Computerkurs mit Windows",
+        "ja": "Windows総合コンピューティング"
+      },
+      "description": {
+        "es": "Paquete Office, Bases de Datos, HTML, Python, Sistemas de Informacion, Introduccion a Diseno Grafico.",
+        "en": "Office suite, databases, HTML, Python, information systems, and introduction to graphic design.",
+        "de": "Office-Paket, Datenbanken, HTML, Python, Informationssysteme und Einfuhrung in Grafikdesign.",
+        "ja": "Officeスイート、データベース、HTML、Python、情報システム、グラフィックデザイン入門。"
+      }
     },
     {
       "institution": "Capacitarte",
       "period": "2025",
-      "title": "WordPress",
-      "description": "WordPress, Funcionalidades, Plugins, Cortafuegos, Dominios, XAMPP, PHPMyAdmin."
+      "title": {
+        "es": "WordPress",
+        "en": "WordPress",
+        "de": "WordPress",
+        "ja": "WordPress"
+      },
+      "description": {
+        "es": "WordPress, Funcionalidades, Plugins, Cortafuegos, Dominios, XAMPP, PHPMyAdmin.",
+        "en": "WordPress, features, plugins, firewalls, domains, XAMPP, PHPMyAdmin.",
+        "de": "WordPress, Funktionen, Plugins, Firewalls, Domains, XAMPP, PHPMyAdmin.",
+        "ja": "WordPress、機能、プラグイン、ファイアウォール、ドメイン、XAMPP、PHPMyAdmin。"
+      }
     },
     {
       "institution": "UTN",
       "period": "2024",
-      "title": "Maquetado Web",
-      "description": "HTML, CSS, Registro de dominio, Servidores Web, Responsive Design, Git/GitHub."
+      "title": {
+        "es": "Maquetado Web",
+        "en": "Web Layout",
+        "de": "Web-Layout",
+        "ja": "Webレイアウト"
+      },
+      "description": {
+        "es": "HTML, CSS, Registro de dominio, Servidores Web, Responsive Design, Git/GitHub.",
+        "en": "HTML, CSS, domain registration, web servers, responsive design, Git/GitHub.",
+        "de": "HTML, CSS, Domainregistrierung, Webserver, Responsive Design, Git/GitHub.",
+        "ja": "HTML、CSS、ドメイン登録、Webサーバー、レスポンシブデザイン、Git/GitHub。"
+      }
     },
     {
       "institution": "IEEE - ITBA",
       "period": "2021",
-      "title": "Introducción a Python",
-      "description": "Variables, operadores, control de flujo, funciones, estructuras de datos, librerías."
+      "title": {
+        "es": "Introduccion a Python",
+        "en": "Introduction to Python",
+        "de": "Einfuhrung in Python",
+        "ja": "Python入門"
+      },
+      "description": {
+        "es": "Variables, operadores, control de flujo, funciones, estructuras de datos, librerias.",
+        "en": "Variables, operators, flow control, functions, data structures, libraries.",
+        "de": "Variablen, Operatoren, Kontrollfluss, Funktionen, Datenstrukturen, Bibliotheken.",
+        "ja": "変数、演算子、制御フロー、関数、データ構造、ライブラリ。"
+      }
     },
     {
       "institution": "Cens 38",
       "period": "2015 - 2017",
-      "title": "Técnico Informático",
+      "title": {
+        "es": "Tecnico Informatico",
+        "en": "IT Technician",
+        "de": "IT-Techniker",
+        "ja": "IT技術者"
+      },
       "description": ""
     },
     {
       "institution": "Otto Krause",
       "period": "2011 - 2015",
-      "title": "Técnico en Electrónica",
+      "title": {
+        "es": "Tecnico en Electronica",
+        "en": "Electronics Technician",
+        "de": "Elektroniktechniker",
+        "ja": "電子技術者"
+      },
       "description": ""
     }
   ],
   "services": [
     {
-      "title": "Web Development",
-      "description": "HTML · CSS · JavaScript · WordPress"
+      "title": {
+        "es": "Desarrollo Web",
+        "en": "Web Development",
+        "de": "Webentwicklung",
+        "ja": "Web開発"
+      },
+      "description": {
+        "es": "HTML · CSS · JavaScript · WordPress",
+        "en": "HTML · CSS · JavaScript · WordPress",
+        "de": "HTML · CSS · JavaScript · WordPress",
+        "ja": "HTML · CSS · JavaScript · WordPress"
+      }
     },
     {
-      "title": "Technical Service",
-      "description": "Reparación de computadoras y laptops."
+      "title": {
+        "es": "Servicio Tecnico",
+        "en": "Technical Service",
+        "de": "Technischer Service",
+        "ja": "テクニカルサービス"
+      },
+      "description": {
+        "es": "Reparacion de computadoras y laptops.",
+        "en": "Computer and laptop repair.",
+        "de": "Reparatur von Computern und Laptops.",
+        "ja": "パソコンとノートPCの修理。"
+      }
     },
     {
-      "title": "Composer",
-      "description": "Estudio Musical — HippieCave"
+      "title": {
+        "es": "Compositor",
+        "en": "Composer",
+        "de": "Komponist",
+        "ja": "作曲"
+      },
+      "description": {
+        "es": "Estudio Musical - HippieCave",
+        "en": "Music Studio - HippieCave",
+        "de": "Musikstudio - HippieCave",
+        "ja": "音楽スタジオ - HippieCave"
+      }
     }
   ],
   "projects": [
     {
       "name": "Personal Portfolio",
-      "type": "Proyecto personal",
+      "type": {
+        "es": "Proyecto personal",
+        "en": "Personal project",
+        "de": "Personliches Projekt",
+        "ja": "個人プロジェクト"
+      },
       "stack": ["HTML", "CSS", "JavaScript", "Tailwind", "GitHub API"],
-      "description": "Portfolio personal con secciones Home, Services, Resume y Work. Integra la GitHub API para mostrar proyectos publicados en GitHub Pages.",
+      "description": {
+        "es": "Portfolio personal con secciones Home, Services, Resume y Work. Integra la GitHub API para mostrar proyectos publicados en GitHub Pages.",
+        "en": "Personal portfolio with Home, Services, Resume, and Work sections. Integrates GitHub API to display projects published on GitHub Pages.",
+        "de": "Personliches Portfolio mit den Bereichen Home, Services, Resume und Work. Integriert die GitHub API, um auf GitHub Pages veroffentlichte Projekte anzuzeigen.",
+        "ja": "Home、Services、Resume、Workで構成された個人ポートフォリオ。GitHub APIを連携し、GitHub Pagesの公開プロジェクトを表示。"
+      },
+      "role": {
+        "es": "Diseno UX/UI y desarrollo frontend",
+        "en": "UX/UI design and frontend development",
+        "de": "UX/UI-Design und Frontend-Entwicklung",
+        "ja": "UX/UI設計とフロントエンド開発"
+      },
+      "duration": {
+        "es": "3 semanas",
+        "en": "3 weeks",
+        "de": "3 Wochen",
+        "ja": "3週間"
+      },
+      "challenge": {
+        "es": "Construir un portfolio modular que mostrara trabajos en tiempo real sin depender de actualizaciones manuales.",
+        "en": "Build a modular portfolio that showed work in real time without manual updates.",
+        "de": "Ein modulares Portfolio erstellen, das Arbeiten in Echtzeit ohne manuelle Aktualisierung zeigt.",
+        "ja": "手動更新に頼らず、実績をリアルタイムで表示できるモジュラー型ポートフォリオの構築。"
+      },
+      "solution": {
+        "es": "Diseno de componentes reutilizables y consumo de la GitHub API para renderizar proyectos dinamicamente.",
+        "en": "Designed reusable components and consumed the GitHub API to render projects dynamically.",
+        "de": "Wiederverwendbare Komponenten entworfen und die GitHub API genutzt, um Projekte dynamisch darzustellen.",
+        "ja": "再利用可能なコンポーネントを設計し、GitHub APIでプロジェクトを動的に描画。"
+      },
+      "result": {
+        "es": "Reduccion del tiempo de mantenimiento y actualizacion automatica de contenido en cada deploy.",
+        "en": "Reduced maintenance time and enabled automatic content updates on each deploy.",
+        "de": "Wartungszeit reduziert und automatische Inhaltsaktualisierung bei jedem Deploy ermoglicht.",
+        "ja": "保守時間を削減し、デプロイごとのコンテンツ自動更新を実現。"
+      },
       "url": "https://martinpentito.github.io/Personal_Portfolio/"
     },
     {
       "name": "Portfolio espejo",
-      "type": "Proyecto personal",
+      "type": {
+        "es": "Proyecto personal",
+        "en": "Personal project",
+        "de": "Personliches Projekt",
+        "ja": "個人プロジェクト"
+      },
       "stack": ["HTML", "CSS", "JavaScript", "JSON"],
-      "description": "Portfolio estático con estética de editor de código, conectado a una fuente de datos única para mantener consistencia y facilitar futuras actualizaciones.",
+      "description": {
+        "es": "Portfolio estatico con estetica de editor de codigo, conectado a una fuente de datos unica para mantener consistencia y facilitar futuras actualizaciones.",
+        "en": "Static portfolio with code-editor aesthetics, connected to a single data source to keep consistency and simplify future updates.",
+        "de": "Statisches Portfolio mit Code-Editor-Design, verbunden mit einer zentralen Datenquelle fur Konsistenz und einfachere Updates.",
+        "ja": "コードエディタ風デザインの静的ポートフォリオ。単一データソースに接続し、一貫性維持と更新効率化を実現。"
+      },
+      "role": {
+        "es": "Arquitectura de datos, diseno visual y desarrollo",
+        "en": "Data architecture, visual design, and development",
+        "de": "Datenarchitektur, visuelles Design und Entwicklung",
+        "ja": "データ設計、ビジュアルデザイン、開発"
+      },
+      "duration": {
+        "es": "2 semanas",
+        "en": "2 weeks",
+        "de": "2 Wochen",
+        "ja": "2週間"
+      },
+      "challenge": {
+        "es": "Mantener consistencia visual y de contenido sin complejizar la estructura tecnica.",
+        "en": "Keep visual and content consistency without overcomplicating the technical structure.",
+        "de": "Visuelle und inhaltliche Konsistenz beibehalten, ohne die technische Struktur zu verkomplizieren.",
+        "ja": "技術構成を複雑化せず、見た目とコンテンツの一貫性を維持すること。"
+      },
+      "solution": {
+        "es": "Separacion entre datos y presentacion usando JSON como fuente unica y render dinamico en JavaScript.",
+        "en": "Separated data and presentation by using JSON as a single source and dynamic JavaScript rendering.",
+        "de": "Trennung von Daten und Darstellung durch JSON als zentrale Quelle und dynamisches Rendering in JavaScript.",
+        "ja": "JSONを単一ソースにしてデータと表示を分離し、JavaScriptで動的レンダリング。"
+      },
+      "result": {
+        "es": "Edicion de contenido mas rapida y menor riesgo de errores al actualizar secciones.",
+        "en": "Faster content editing and lower risk of errors when updating sections.",
+        "de": "Schnellere Inhaltsbearbeitung und geringeres Fehlerrisiko bei Abschnittsaktualisierungen.",
+        "ja": "コンテンツ編集を高速化し、セクション更新時のエラーリスクを低減。"
+      },
       "url": "https://github.com/MartinPentito/Portafolio_espejo_codigo_HTML_CSS_JS"
     },
     {
       "name": "Game Designer Portfolio",
-      "type": "Proyecto para cliente",
+      "type": {
+        "es": "Proyecto para cliente",
+        "en": "Client project",
+        "de": "Kundenprojekt",
+        "ja": "クライアントプロジェクト"
+      },
       "stack": ["HTML", "CSS", "JavaScript", "GitHub Pages"],
-      "description": "Portfolio para un diseñador narrativo y de juegos, publicado con GitHub Pages.",
+      "description": {
+        "es": "Portfolio para un disenador narrativo y de juegos, publicado con GitHub Pages.",
+        "en": "Portfolio for a narrative and game designer, published with GitHub Pages.",
+        "de": "Portfolio fur einen Narrative- und Game-Designer, veroffentlicht auf GitHub Pages.",
+        "ja": "ナラティブ／ゲームデザイナー向けポートフォリオをGitHub Pagesで公開。"
+      },
+      "role": {
+        "es": "Desarrollo frontend y publicacion",
+        "en": "Frontend development and publishing",
+        "de": "Frontend-Entwicklung und Veroffentlichung",
+        "ja": "フロントエンド開発と公開"
+      },
+      "duration": {
+        "es": "10 dias",
+        "en": "10 days",
+        "de": "10 Tage",
+        "ja": "10日"
+      },
+      "challenge": {
+        "es": "Transmitir identidad creativa del cliente sin perder claridad en navegacion.",
+        "en": "Convey the client's creative identity without losing navigation clarity.",
+        "de": "Die kreative Identitat des Kunden vermitteln, ohne die Navigationsklarheit zu verlieren.",
+        "ja": "ナビゲーションの明瞭さを保ちながら、クライアントの創造性を表現すること。"
+      },
+      "solution": {
+        "es": "Estructura de secciones narrativa con jerarquia visual clara y enfoque mobile-first.",
+        "en": "Built a narrative section structure with clear visual hierarchy and a mobile-first approach.",
+        "de": "Narrative Abschnittsstruktur mit klarer visueller Hierarchie und Mobile-First-Ansatz umgesetzt.",
+        "ja": "明確な視覚階層とモバイルファーストを軸に、物語性のあるセクション構成を設計。"
+      },
+      "result": {
+        "es": "Presentacion profesional del perfil del cliente y entrega lista para compartir en procesos de seleccion.",
+        "en": "Delivered a professional client profile presentation ready to share in hiring processes.",
+        "de": "Professionelle Darstellung des Kundenprofils bereitgestellt, einsatzbereit fur Bewerbungsprozesse.",
+        "ja": "採用プロセスで共有可能な、プロ仕様のプロフィール提示を実現。"
+      },
       "url": "https://martinpentito.github.io/portfolio_react_dante/"
     },
     {
       "name": "Laincop iPhone Catalog",
-      "type": "Proyecto para cliente",
+      "type": {
+        "es": "Proyecto para cliente",
+        "en": "Client project",
+        "de": "Kundenprojekt",
+        "ja": "クライアントプロジェクト"
+      },
       "stack": ["HTML", "CSS", "JavaScript"],
-      "description": "Catálogo de productos con flujo de contacto directo por WhatsApp para consultas de venta mobile.",
+      "description": {
+        "es": "Catalogo de productos con flujo de contacto directo por WhatsApp para consultas de venta mobile.",
+        "en": "Product catalog with direct WhatsApp contact flow for mobile sales inquiries.",
+        "de": "Produktkatalog mit direktem WhatsApp-Kontaktfluss fur mobile Verkaufsanfragen.",
+        "ja": "モバイル販売問い合わせ向けに、WhatsAppへ直接つながる導線を備えた商品カタログ。"
+      },
+      "role": {
+        "es": "Diseno de catalogo y flujo de conversion",
+        "en": "Catalog design and conversion flow",
+        "de": "Katalogdesign und Conversion-Flow",
+        "ja": "カタログ設計とコンバージョン導線"
+      },
+      "duration": {
+        "es": "2 semanas",
+        "en": "2 weeks",
+        "de": "2 Wochen",
+        "ja": "2週間"
+      },
+      "challenge": {
+        "es": "Simplificar el contacto comercial en movil para acelerar consultas reales.",
+        "en": "Simplify mobile business contact to speed up real inquiries.",
+        "de": "Den mobilen Geschaftskontakt vereinfachen, um echte Anfragen zu beschleunigen.",
+        "ja": "実問い合わせを増やすため、モバイルでの商談導線を簡素化すること。"
+      },
+      "solution": {
+        "es": "Catalogo liviano con CTA por producto y enlace directo a WhatsApp con contexto de compra.",
+        "en": "Built a lightweight catalog with per-product CTAs and direct WhatsApp links with purchase context.",
+        "de": "Leichter Katalog mit produktbezogenen CTAs und direkten WhatsApp-Links mit Kaufkontext.",
+        "ja": "商品ごとのCTAと購入文脈付きWhatsApp直リンクを持つ軽量カタログを構築。"
+      },
+      "result": {
+        "es": "Mejora en la velocidad de contacto entre clientes potenciales y vendedor.",
+        "en": "Improved contact speed between potential clients and seller.",
+        "de": "Schnellere Kontaktaufnahme zwischen potenziellen Kunden und Verkaufer erreicht.",
+        "ja": "見込み客と販売者の接触スピードを向上。"
+      },
       "url": "https://martinpentito.github.io/catalogo-laincop-iphones/"
     }
   ]

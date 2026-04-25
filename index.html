@@ -6,36 +6,95 @@
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#1e1e1e">
     <meta name="description" content="Portfolio técnico de Martín Pentito — Web Developer, Computer Technician y Composer. HTML, CSS, JavaScript, Python, WordPress.">
+    <meta name="robots" content="index,follow">
+    <meta name="author" content="Martín Pentito">
     <meta property="og:title" content="Martín Pentito - Portfolio">
     <meta property="og:description" content="Portfolio técnico de Martín Pentito — Web Developer, Computer Technician y Composer.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://martinpentito.github.io/Portafolio_espejo_codigo_HTML_CSS_JS/">
     <meta property="og:image" content="assets/ThisJipi_img.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Martín Pentito - Portfolio">
+    <meta name="twitter:description" content="Portfolio técnico de Martín Pentito — Web Developer, Computer Technician y Composer.">
+    <meta name="twitter:image" content="assets/ThisJipi_img.png">
+    <link rel="canonical" href="https://martinpentito.github.io/Portafolio_espejo_codigo_HTML_CSS_JS/">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/ThisJipi_img_backgroundoff.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://api.github.com">
     <title>Martín Pentito - Portfolio</title>
     <link rel="icon" href="assets/ThisJipi_img_backgroundoff.png" type="image/png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <script type="application/ld+json" id="structured-data"></script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <div class="container">
-        <aside class="sidebar" aria-label="Perfil lateral">
+        <aside class="sidebar" id="sidebar" aria-label="Perfil lateral">
             <div class="tag">&lt;img&gt;</div>
             <div class="profile-frame">
-                <img src="assets/ThisJipi_img.png" alt="Martín Pentito" class="profile-img" id="profile-image">
+                <img src="assets/ThisJipi_img.png" alt="Martín Pentito" class="profile-img" id="profile-image" loading="lazy" decoding="async">
                 <div class="profile-fallback" id="profile-fallback" aria-hidden="true">ThisJipi</div>
             </div>
             <div class="tag">&lt;/img&gt;</div>
 
             <div id="sidebar-content"></div>
+
+            <section class="theme-switcher" aria-label="Temas inspirados en Visual Studio Code">
+                <div class="theme-switcher-title">theme:</div>
+                <div class="theme-buttons" id="theme-buttons">
+                    <button class="theme-btn" type="button" data-theme="vscode-dark-plus" aria-pressed="true" aria-label="Dark Plus" title="Dark Plus">
+                        <i class="bx bxs-moon theme-icon theme-icon-dark" aria-hidden="true"></i>
+                    </button>
+                    <button class="theme-btn" type="button" data-theme="vscode-monokai" aria-pressed="false" aria-label="Monokai" title="Monokai">
+                        <i class="bx bxs-palette theme-icon theme-icon-monokai" aria-hidden="true"></i>
+                    </button>
+                    <button class="theme-btn" type="button" data-theme="vscode-abyss" aria-pressed="false" aria-label="Abyss" title="Abyss">
+                        <i class="bx bxs-droplet theme-icon theme-icon-abyss" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section class="lang-switcher" id="lang-switcher" aria-label="Idioma de la web">
+                <div class="lang-switcher-title">lang:</div>
+                <div class="lang-buttons" id="lang-buttons">
+                    <button class="lang-btn" type="button" data-lang="es" aria-pressed="true" title="Espanol">ES</button>
+                    <button class="lang-btn" type="button" data-lang="en" aria-pressed="false" title="English">EN</button>
+                    <button class="lang-btn" type="button" data-lang="de" aria-pressed="false" title="Deutsch">DE</button>
+                    <button class="lang-btn" type="button" data-lang="ja" aria-pressed="false" title="Japanese">JA</button>
+                </div>
+            </section>
         </aside>
 
         <div class="main-wrapper">
-            <nav class="tab-bar" id="section-nav" hidden aria-label="Secciones del portfolio"></nav>
+            <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" hidden>Perfil</button>
+            <nav class="tab-bar" id="section-nav" hidden aria-label="Secciones del portfolio" aria-live="polite"></nav>
             <main class="main-content" aria-live="polite">
                 <div class="status" id="loading-state"></div>
                 <div id="main-content" hidden></div>
             </main>
             <footer class="statusbar" id="statusbar" hidden></footer>
         </div>
+    </div>
+
+    <div class="command-overlay" id="command-overlay" hidden></div>
+    <div class="command-palette" id="command-palette" hidden role="dialog" aria-modal="true" aria-label="Command palette">
+        <div class="command-header">
+            <i class="bx bx-terminal command-header-icon" aria-hidden="true"></i>
+            <input
+                class="command-input"
+                id="command-input"
+                type="text"
+                placeholder="Type a command..."
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Type a command"
+            >
+        </div>
+        <ul class="command-list" id="command-list" role="listbox"></ul>
     </div>
 
     <script src="js/script.js"></script>
