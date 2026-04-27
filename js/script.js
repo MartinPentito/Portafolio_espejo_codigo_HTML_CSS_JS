@@ -6,6 +6,7 @@ const MOBILE_SIDEBAR_STORAGE_KEY = 'portfolio-mobile-sidebar-collapsed';
 const DEFAULT_THEME = 'vscode-dark-plus';
 const DEFAULT_LANG = 'es';
 const SUPPORTED_LANGS = ['es', 'en', 'de', 'ja'];
+const CERTIFICATES_PDF_URL = 'assets/Certificados.pdf';
 
 const LOCALE_BY_LANG = {
     es: 'es-AR',
@@ -33,6 +34,7 @@ const I18N = {
         section_education: 'EDUCATION',
         section_services: 'SERVICES',
         section_projects: 'PROJECTS',
+        nav_certificates: 'CERTIFICADOS',
         stack_languages: 'Lenguajes y tecnologias',
         stack_platforms: 'Plataformas',
         stack_tools: 'Herramientas',
@@ -68,6 +70,9 @@ const I18N = {
         cmd_go_section: 'Ir a',
         cmd_copy_email: 'Copiar email',
         cmd_download_cv: 'Descargar CV',
+        cmd_open_certificates: 'Ver certificados',
+        cmd_keywords_certificates: 'certificados pdf',
+        cmd_keywords_cv: 'cv descargar lebenslauf resume download',
         sidebar_show: 'Mostrar perfil',
         sidebar_hide: 'Ocultar perfil',
         profile_cv: 'CV',
@@ -99,6 +104,7 @@ const I18N = {
         section_education: 'EDUCATION',
         section_services: 'SERVICES',
         section_projects: 'PROJECTS',
+        nav_certificates: 'CERTIFICATES',
         stack_languages: 'Languages and technologies',
         stack_platforms: 'Platforms',
         stack_tools: 'Tools',
@@ -134,6 +140,9 @@ const I18N = {
         cmd_go_section: 'Go to',
         cmd_copy_email: 'Copy email',
         cmd_download_cv: 'Download CV',
+        cmd_open_certificates: 'View certificates',
+        cmd_keywords_certificates: 'certificates pdf',
+        cmd_keywords_cv: 'cv descargar lebenslauf resume download',
         sidebar_show: 'Show profile',
         sidebar_hide: 'Hide profile',
         profile_cv: 'CV',
@@ -165,6 +174,7 @@ const I18N = {
         section_education: 'EDUCATION',
         section_services: 'SERVICES',
         section_projects: 'PROJECTS',
+        nav_certificates: 'ZERTIFIKATE',
         stack_languages: 'Sprachen und Technologien',
         stack_platforms: 'Plattformen',
         stack_tools: 'Werkzeuge',
@@ -200,6 +210,9 @@ const I18N = {
         cmd_go_section: 'Gehe zu',
         cmd_copy_email: 'E-Mail kopieren',
         cmd_download_cv: 'Lebenslauf herunterladen',
+        cmd_open_certificates: 'Zertifikate anzeigen',
+        cmd_keywords_certificates: 'zertifikate pdf',
+        cmd_keywords_cv: 'cv descargar lebenslauf resume download',
         sidebar_show: 'Profil anzeigen',
         sidebar_hide: 'Profil ausblenden',
         profile_cv: 'Lebenslauf',
@@ -231,6 +244,7 @@ const I18N = {
         section_education: 'EDUCATION',
         section_services: 'SERVICES',
         section_projects: 'PROJECTS',
+        nav_certificates: '証明書',
         stack_languages: '言語と技術',
         stack_platforms: 'プラットフォーム',
         stack_tools: 'ツール',
@@ -266,6 +280,9 @@ const I18N = {
         cmd_go_section: '移動先',
         cmd_copy_email: 'メールをコピー',
         cmd_download_cv: '履歴書をダウンロード',
+        cmd_open_certificates: '証明書を見る',
+        cmd_keywords_certificates: '証明書 pdf',
+        cmd_keywords_cv: 'cv descargar lebenslauf resume download',
         sidebar_show: 'プロフィールを表示',
         sidebar_hide: 'プロフィールを非表示',
         profile_cv: '履歴書',
@@ -822,6 +839,7 @@ function initCounterAnimation() {
 // ─── Main Content ────────────────────────────────────────
 function buildMainContent(data, repos = []) {
     const publicRepos = getPublicRepos(repos);
+    const certificatesUrl = CERTIFICATES_PDF_URL;
     const sections = [
         { id: 'profile',    label: getSectionLabel('profile'),    lines: buildProfileLines(data) },
         { id: 'stack',      label: getSectionLabel('stack'),      lines: buildStackLines(data) },
@@ -832,9 +850,14 @@ function buildMainContent(data, repos = []) {
         { id: 'projects',   label: getSectionLabel('projects'),   lines: buildProjectsLines(data, publicRepos) }
     ];
 
-    stateElements.sectionNav.innerHTML = sections
-        .map(s => `<a class="nav-tab" href="#${s.id}">${s.label}</a>`)
-        .join('');
+    const navItems = sections
+        .map(s => `<a class="nav-tab" href="#${s.id}">${s.label}</a>`);
+
+    if (certificatesUrl) {
+        navItems.push(`<a class="nav-tab" href="${escapeAttribute(certificatesUrl)}" target="_blank" rel="noreferrer" data-external="true">${escapeHtml(t('nav_certificates'))}</a>`);
+    }
+
+    stateElements.sectionNav.innerHTML = navItems.join('');
     stateElements.sectionNav.hidden = false;
 
     return sections
@@ -1283,6 +1306,11 @@ function initializeInteractions() {
 
     tabs.forEach(tab => {
         tab.addEventListener('click', (e) => {
+            if (tab.dataset.external === 'true') {
+                e.preventDefault();
+                window.open(tab.getAttribute('href'), '_blank', 'noreferrer');
+                return;
+            }
             e.preventDefault();
             const target = document.getElementById(tab.getAttribute('href').slice(1));
             if (!target) return;
@@ -1321,6 +1349,11 @@ function initializeInteractions() {
             }
         }
         tabs.forEach(tab => {
+            if (tab.dataset.external === 'true') {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-current', 'false');
+                return;
+            }
             const isActive = tab.getAttribute('href') === `#${activeId}`;
             tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-current', isActive ? 'page' : 'false');
@@ -1348,7 +1381,13 @@ function initializeProjectFilters() {
         return;
     }
 
-    const savedFilters = JSON.parse(localStorage.getItem('portfolio-filters') || 'null');
+    let savedFilters = null;
+    try {
+        const rawSavedFilters = localStorage.getItem('portfolio-filters');
+        savedFilters = rawSavedFilters ? JSON.parse(rawSavedFilters) : null;
+    } catch (error) {
+        savedFilters = null;
+    }
     if (savedFilters) {
         searchInput.value = savedFilters.rawQuery || '';
         typeSelect.value = savedFilters.type || '';
@@ -1363,11 +1402,15 @@ function initializeProjectFilters() {
         appState.projectFilters.type = typeSelect.value || '';
         appState.projectFilters.tech = techSelect.value || '';
 
-        localStorage.setItem('portfolio-filters', JSON.stringify({
-            rawQuery: searchInput.value || '',
-            type: appState.projectFilters.type,
-            tech: appState.projectFilters.tech
-        }));
+        try {
+            localStorage.setItem('portfolio-filters', JSON.stringify({
+                rawQuery: searchInput.value || '',
+                type: appState.projectFilters.type,
+                tech: appState.projectFilters.tech
+            }));
+        } catch (error) {
+            // Ignore storage errors (private mode / blocked storage)
+        }
 
         let visibleCount = 0;
 
@@ -1548,7 +1591,7 @@ function getCommandEntries() {
 
     entries.push({
         label: t('cmd_download_cv'),
-        keywords: 'cv resume download descargar lebenslauf',
+        keywords: t('cmd_keywords_cv'),
         action: () => {
             const localizedData = appState.data ? localizeDeep(appState.data) : null;
             const cv = localizedData?.personal?.cv;
@@ -1557,6 +1600,14 @@ function getCommandEntries() {
             a.href = cv;
             a.download = '';
             a.click();
+        }
+    });
+
+    entries.push({
+        label: t('cmd_open_certificates'),
+        keywords: t('cmd_keywords_certificates'),
+        action: () => {
+            window.open(CERTIFICATES_PDF_URL, '_blank', 'noreferrer');
         }
     });
 
@@ -1667,11 +1718,18 @@ function initStatusBar() {
     const printBtn = document.getElementById('sb-print');
     if (printBtn) {
         printBtn.style.cursor = 'pointer';
-        printBtn.addEventListener('click', () => window.print());
+        const openCvPdf = () => {
+            const localizedData = appState.data ? localizeDeep(appState.data) : null;
+            const cv = localizedData?.personal?.cv;
+            if (cv) {
+                window.open(cv, '_blank', 'noreferrer');
+            }
+        };
+        printBtn.addEventListener('click', openCvPdf);
         printBtn.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                window.print();
+                openCvPdf();
             }
         });
     }

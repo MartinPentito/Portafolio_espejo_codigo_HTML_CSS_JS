@@ -7,22 +7,25 @@ Portfolio web estático con estética inspirada en editor de código.
 ```
 Portafolio_espejo_codigo_HTML_CSS_JS/
 ├── index.html
-├── styles.css
-├── script.js
-├── data.json
+├── css/
+│   └── styles.css
+├── js/
+│   └── script.js
+├── data/
+│   └── data.json
 └── README.md
 ```
 
 ## Cómo funciona
 
 - `index.html` define la estructura base del portfolio.
-- `script.js` carga `data.json` y renderiza el contenido en pantalla.
-- `styles.css` mantiene la estética tipo editor y el diseño responsive.
-- `data.json` es la fuente única de datos del perfil.
+- `js/script.js` carga `data/data.json` y renderiza el contenido en pantalla.
+- `css/styles.css` mantiene la estética tipo editor y el diseño responsive.
+- `data/data.json` es la fuente única de datos del perfil.
 
 ## Edición de contenido
 
-Para actualizar el portfolio, modifica `data.json`.
+Para actualizar el portfolio, modifica `data/data.json`.
 
 - `personal`: nombre, rol, enfoque, ubicación y foto.
 - `platforms`, `techStack`, `tools`: stack y herramientas.
@@ -34,7 +37,7 @@ Para actualizar el portfolio, modifica `data.json`.
 
 Usa Live Server o cualquier servidor local para abrir `index.html`.
 
-Si abres el archivo directamente con `file://`, algunos navegadores bloquean la carga de `data.json`.
+Si abres el archivo directamente con `file://`, algunos navegadores bloquean la carga de `data/data.json`.
 
 ## Nota sobre la imagen
 

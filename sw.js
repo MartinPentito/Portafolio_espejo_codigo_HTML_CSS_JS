@@ -9,6 +9,8 @@ const PRECACHE_ASSETS = [
     './data/data.json',
     './assets/ThisJipi_img.png',
     './assets/ThisJipi_img_backgroundoff.png',
+    './assets/Pentito Martín.pdf',
+    './assets/Certificados.pdf',
     './manifest.json'
 ];
 
@@ -38,7 +40,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // GitHub API → network-first con caché de 1 hora como fallback
+    // GitHub API → network-first con fallback al último response cacheado
     if (url.hostname === 'api.github.com') {
         event.respondWith(
             fetch(event.request)

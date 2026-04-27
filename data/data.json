@@ -15,7 +15,7 @@
     },
     "location": "Argentina",
     "email": "martinepentito@gmail.com",
-    "cv": "assets/MartinPentito_cv.pdf",
+    "cv": "assets/Pentito Martín.pdf",
     "photo": "assets/ThisJipi_img.png"
   },
   "summary": {
@@ -43,16 +43,7 @@
     "XAMPP",
     "PHPMyAdmin"
   ],
-  "media": [
-    {
-      "label": "LinkedIn",
-      "url": "https://www.linkedin.com/in/martinepentito/"
-    },
-    {
-      "label": "GitHub",
-      "url": "https://github.com/MartinPentito"
-    }
-  ],
+  "media": [],
   "languages": [
     {
       "name": {
