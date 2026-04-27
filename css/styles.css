@@ -1147,7 +1147,7 @@ body {
     .main-wrapper {
         order: 1;
         flex: 1 1 auto;
-        min-height: 66vh;
+        min-height: 68vh;
     }
 
     .sidebar-toggle {
@@ -1159,7 +1159,7 @@ body {
         order: 2;
         flex: none;
         width: 100%;
-        max-height: 36vh;
+        max-height: 32vh;
         border-right: none;
         border-top: 1px solid var(--border);
         border-bottom: none;
@@ -1224,21 +1224,17 @@ body {
     .nav-tab {
         padding: 9px 12px;
         font-size: 12px;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        scroll-snap-align: start;
     }
 
     .tab-bar {
         position: sticky;
         top: 0;
         z-index: 4;
-        scroll-snap-type: x proximity;
+        background-color: var(--bg-card);
     }
 
     .main-content {
-        padding: 12px 14px;
+        padding: 11px 13px;
     }
 
     .line-number {
@@ -1342,7 +1338,7 @@ body {
 /* ─── Teléfonos estándar  (≤ 480px) ─── */
 @media (max-width: 480px) {
     .sidebar {
-        max-height: 26vh;
+        max-height: 27vh;
         padding: 9px 10px;
         gap: 7px;
     }
@@ -1395,10 +1391,6 @@ body {
 
 /* ─── Teléfonos pequeños — iPhone SE, Galaxy A  (≤ 390px) ─── */
 @media (max-width: 390px) {
-    .main-wrapper {
-        min-height: 72vh;
-    }
-
     .sidebar {
         max-height: 24vh;
         flex-direction: row;
