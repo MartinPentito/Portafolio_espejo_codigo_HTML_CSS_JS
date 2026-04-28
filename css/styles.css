@@ -1,9 +1,22 @@
+/**
+ * @file styles.css
+ * @description Estilos del portfolio de Martín Pentito.
+ *   Implementa una estética de editor de código (VSCode-like) con soporte para
+ *   3 temas intercambiables vía variables CSS, diseño responsive para todos los
+ *   breakpoints modernos (320px – 4K), animaciones de entrada y accesibilidad.
+ * @author Martín Pentito
+ */
+
+/* ─── Reset global ─────────────────────────────────────────────────────────────── */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ─── Variables CSS (tema Dark+ por defecto) ───────────────────────────────────
+   Los temas alternativos (Monokai, Abyss) sobreescriben estas variables
+   mediante JavaScript (script.js → applyTheme). */
 :root {
     color-scheme: dark;
     --bg-main: #1e1e1e;
@@ -63,6 +76,9 @@ a:focus-visible {
     border-radius: 3px;
 }
 
+/* ─── Layout principal ────────────────────────────────────────────────────────────
+   flex row en desktop, flex column en mobile (≤768px).
+   .sidebar: panel lateral fijo | .main-wrapper: zona de contenido principal */
 body {
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     background: radial-gradient(circle at top, #252526 0%, var(--bg-main) 55%);
@@ -89,6 +105,9 @@ body {
     align-items: center;
 }
 
+/* ─── Sidebar: imagen de perfil ──────────────────────────────────────────────────────
+   Muestra foto de perfil circular. Si la imagen falla, .profile-fallback
+   muestra las iniciales del nombre (JavaScript añade la clase `missing-image`). */
 .profile-frame {
     position: relative;
     width: 160px;
@@ -218,6 +237,9 @@ body {
     transform: scale(1.15);
 }
 
+/* ─── Wrapper principal y tabs de navegación ──────────────────────────────────────
+   Ocupa el espacio restante al sidebar. Contiene la tab-bar, el main-content
+   y el statusbar. La tab-bar es scrollable horizontalmente en pantallas pequeñas. */
 .main-wrapper {
     flex: 1;
     display: flex;
@@ -395,6 +417,10 @@ body {
     color: #48c6ff;
 }
 
+/* ─── Área de contenido principal ─────────────────────────────────────────────────────
+   Zona con scroll que contiene todas las secciones `.code-section`.
+   Líneas de código: número (.line-number) + contenido (.code).
+   Tokens de sintaxis: .keyword, .string, .comment, .function, etc. */
 .main-content {
     flex: 1;
     padding: clamp(10px, 2vw, 24px) clamp(12px, 3vw, 40px) clamp(96px, 24vh, 260px);
@@ -937,6 +963,10 @@ body {
     flex-shrink: 0;
 }
 
+/* ─── Statusbar inferior ──────────────────────────────────────────────────────────────
+   Barra inferior fija de 22 px estilo VSCode. Muestra lenguaje, encoding,
+   líneas totales, sección activa y atajo del command palette.
+   Inicializada dinámicamente por initStatusBar() en script.js. */
 .statusbar {
     height: 22px;
     background-color: var(--statusbar-bg);

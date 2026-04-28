@@ -1,6 +1,12 @@
 <!DOCTYPE html>
+<!-- Portfolio de Martín Pentito
+     Estructura: shell HTML mínimo — todo el contenido se renderiza dinámicamente
+     desde data/data.json vía js/script.js. -->
 <html lang="es">
 <head>
+    <!-- ── SEO, accesibilidad y PWA ─────────────────────────────────────────
+         Open Graph, Twitter Cards, structured data (JSON-LD), canonical URL,
+         manifest para instalar como PWA y preconexiones a CDN externos. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
@@ -33,7 +39,11 @@
 <body>
     <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <div class="container">
-        <aside class="sidebar" id="sidebar" aria-label="Perfil lateral">
+    <!-- ── Sidebar: imagen de perfil, nombre, media links, tema e idioma ───
+         El contenido (#sidebar-content) se inyecta por script.js.
+         El selector de tema y el de idioma están aquí en el HTML para que
+         funcionen antes de que cargue el portfolio (evita flash sin tema). -->
+    <aside class="sidebar" id="sidebar" aria-label="Perfil lateral">
             <div class="tag">&lt;img&gt;</div>
             <div class="profile-frame">
                 <img src="assets/ThisJipi_img.png" alt="Martín Pentito" class="profile-img" id="profile-image" loading="lazy" decoding="async">
@@ -69,7 +79,11 @@
             </section>
         </aside>
 
-        <div class="main-wrapper">
+            <!-- ── Contenido principal ──────────────────────────────────────
+                 El wrapper contiene (en orden): botón toggle mobile, barra de
+                 tabs, secciones de contenido (main) y statusbar inferior.
+                 Todo se genera dinámicamente por buildMainContent() en script.js. -->
+            <div class="main-wrapper">
             <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" hidden>Perfil</button>
             <nav class="tab-bar" id="section-nav" hidden aria-label="Secciones del portfolio" aria-live="polite"></nav>
             <main class="main-content" aria-live="polite">
@@ -80,6 +94,9 @@
         </div>
     </div>
 
+    <!-- ── Command palette (Ctrl+K / ⌘K) ───────────────────────────────────
+         Overlay + panel flotante. Permanece oculto hasta que el usuario
+         presiona el atajo o hace clic en el hint del statusbar. -->
     <div class="command-overlay" id="command-overlay" hidden></div>
     <div class="command-palette" id="command-palette" hidden role="dialog" aria-modal="true" aria-label="Command palette">
         <div class="command-header">

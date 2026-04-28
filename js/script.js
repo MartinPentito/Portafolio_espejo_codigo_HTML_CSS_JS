@@ -1,3 +1,12 @@
+/**
+ * @file script.js
+ * @description Lógica central del portfolio de Martín Pentito.
+ *   Carga `data/data.json`, consume la GitHub API y renderiza el contenido
+ *   como código estilizado tipo editor (VSCode). Gestiona temas, idiomas,
+ *   command palette, animaciones y el registro del Service Worker (PWA).
+ * @author Martín Pentito
+ */
+
 // ─── GitHub Config ─────────────────────────────────────────────────────────
 const GITHUB_USER = 'MartinPentito';
 const THEME_STORAGE_KEY = 'portfolio-theme';
@@ -8,6 +17,7 @@ const DEFAULT_LANG = 'es';
 const SUPPORTED_LANGS = ['es', 'en', 'de', 'ja'];
 const CERTIFICATES_PDF_URL = 'assets/Certificados.pdf';
 
+/** Mapeo de código de idioma a locale BCP 47 para formateo de fechas con Intl. */
 const LOCALE_BY_LANG = {
     es: 'es-AR',
     en: 'en-US',
@@ -15,6 +25,12 @@ const LOCALE_BY_LANG = {
     ja: 'ja-JP'
 };
 
+// ─── Traducciones (i18n) ─────────────────────────────────────────────────────
+/**
+ * Diccionario de traducciones de la interfaz.
+ * Contiene las 4 variantes de idioma soportadas: es, en, de, ja.
+ * Se accede a través de la función t(key).
+ */
 const I18N = {
     es: {
         page_title_suffix: 'Portfolio',
@@ -298,6 +314,7 @@ const I18N = {
     }
 };
 
+/** Estado global de la aplicación. Almacena datos cargados, repos y el estado de la UI. */
 const appState = {
     data: null,
     repos: [],
@@ -315,6 +332,10 @@ const appState = {
 
 let currentLang = DEFAULT_LANG;
 
+/**
+ * Definición de los temas visuales disponibles, inspirados en temas de Visual Studio Code.
+ * Cada tema define las variables CSS que se aplican en `:root` y los meta tags de color.
+ */
 const VS_CODE_THEMES = {
     'vscode-dark-plus': {
         colorScheme: 'dark',
@@ -423,6 +444,8 @@ const stateElements = {
     statusbar: document.getElementById('statusbar')
 };
 
+// ─── Inicialización ──────────────────────────────────────────────────────────
+// Se ejecuta cuando el DOM está listo. Arranca todos los subsistemas del portfolio.
 document.addEventListener('DOMContentLoaded', () => {
     initializeLanguageSwitcher();
     initializeThemeSwitcher();
@@ -432,6 +455,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPortfolio();
 });
 
+// ─── Idioma ──────────────────────────────────────────────────────────────────
+/**
+ * Inicializa el selector de idioma.
+ * Registra el listener de clic en los botones y aplica el idioma guardado en
+ * localStorage, o el idioma por defecto si no hay preferencia guardada.
+ */
 function initializeLanguageSwitcher() {
     const langButtonsContainer = document.getElementById('lang-buttons');
     if (!langButtonsContainer) return;
@@ -448,6 +477,12 @@ function initializeLanguageSwitcher() {
     setLanguage(initialLang, { persist: false, rerender: false });
 }
 
+/**
+ * Cambia el idioma activo, actualiza el DOM, persiste la preferencia
+ * y vuelve a renderizar el portfolio si ya existen datos cargados.
+ * @param {string} lang - Código de idioma ('es'|'en'|'de'|'ja').
+ * @param {{ persist?: boolean, rerender?: boolean }} [options]
+ */
 function setLanguage(lang, options = {}) {
     const { persist = true, rerender = true } = options;
     currentLang = SUPPORTED_LANGS.includes(lang) ? lang : DEFAULT_LANG;
@@ -464,6 +499,7 @@ function setLanguage(lang, options = {}) {
     }
 }
 
+/** Lee el idioma guardado en localStorage. Devuelve null si el acceso falla (modo privado). */
 function getSavedLanguage() {
     try {
         return localStorage.getItem(LANG_STORAGE_KEY);
@@ -472,6 +508,10 @@ function getSavedLanguage() {
     }
 }
 
+/**
+ * Persiste el idioma activo en localStorage.
+ * @param {string} lang - Código de idioma a guardar.
+ */
 function saveLanguage(lang) {
     try {
         localStorage.setItem(LANG_STORAGE_KEY, lang);
@@ -480,6 +520,7 @@ function saveLanguage(lang) {
     }
 }
 
+/** Sincroniza el estado visual (clase `active` y `aria-pressed`) de los botones de idioma. */
 function updateLanguageButtons() {
     document.querySelectorAll('.lang-btn').forEach((button) => {
         const isActive = button.dataset.lang === currentLang;
@@ -488,6 +529,10 @@ function updateLanguageButtons() {
     });
 }
 
+/**
+ * Actualiza atributos de accesibilidad (aria-label, lang en <html>) y textos del DOM
+ * que dependen del idioma activo, sin necesidad de re-renderizar el contenido completo.
+ */
 function applyLanguageMetadata() {
     document.documentElement.setAttribute('lang', currentLang);
 
@@ -522,10 +567,13 @@ function applyLanguageMetadata() {
     updateMobileSidebarToggleLabel();
 }
 
+// ─── Mobile sidebar ──────────────────────────────────────────────────────────
+/** Devuelve true si el viewport tiene 768 px de ancho o menos (breakpoint mobile). */
 function isMobileViewport() {
     return window.matchMedia('(max-width: 768px)').matches;
 }
 
+/** Lee desde localStorage si el sidebar está colapsado en mobile. Devuelve true por defecto. */
 function getSavedMobileSidebarCollapsed() {
     try {
         return localStorage.getItem(MOBILE_SIDEBAR_STORAGE_KEY) === '1';
@@ -534,6 +582,10 @@ function getSavedMobileSidebarCollapsed() {
     }
 }
 
+/**
+ * Persiste el estado colapsado/expandido del sidebar mobile en localStorage.
+ * @param {boolean} collapsed - true para colapsado, false para expandido.
+ */
 function saveMobileSidebarCollapsed(collapsed) {
     try {
         localStorage.setItem(MOBILE_SIDEBAR_STORAGE_KEY, collapsed ? '1' : '0');
@@ -542,6 +594,7 @@ function saveMobileSidebarCollapsed(collapsed) {
     }
 }
 
+/** Actualiza el texto y aria-label del botón toggle del sidebar según el estado actual. */
 function updateMobileSidebarToggleLabel() {
     const toggle = document.getElementById('sidebar-toggle');
     if (!toggle) return;
@@ -552,6 +605,12 @@ function updateMobileSidebarToggleLabel() {
     toggle.setAttribute('aria-expanded', String(!collapsed));
 }
 
+/**
+ * Aplica o elimina la clase `mobile-sidebar-collapsed` del body según el viewport.
+ * Solo colapsa en mobile; en desktop siempre mantiene el sidebar visible.
+ * @param {boolean} collapsed
+ * @param {{ persist?: boolean }} [options]
+ */
 function setMobileSidebarCollapsed(collapsed, options = {}) {
     const { persist = true } = options;
 
@@ -568,6 +627,10 @@ function setMobileSidebarCollapsed(collapsed, options = {}) {
     updateMobileSidebarToggleLabel();
 }
 
+/**
+ * Inicializa el botón que colapsa el sidebar en mobile.
+ * Aplica el estado guardado en localStorage y registra el listener de resize (una sola vez).
+ */
 function initializeMobileSidebarToggle() {
     const toggle = document.getElementById('sidebar-toggle');
     if (!toggle) return;
@@ -589,6 +652,11 @@ function initializeMobileSidebarToggle() {
     }
 }
 
+// ─── Tema ────────────────────────────────────────────────────────────────────
+/**
+ * Inicializa el selector de tema.
+ * Registra el listener de clic y aplica el tema guardado en localStorage (o el default).
+ */
 function initializeThemeSwitcher() {
     const themeButtonsContainer = document.getElementById('theme-buttons');
     if (!themeButtonsContainer) return;
@@ -605,6 +673,7 @@ function initializeThemeSwitcher() {
     applyTheme(initialTheme, { persist: false });
 }
 
+/** Lee el tema guardado en localStorage. Devuelve null si el acceso falla. */
 function getSavedTheme() {
     try {
         return localStorage.getItem(THEME_STORAGE_KEY);
@@ -613,6 +682,10 @@ function getSavedTheme() {
     }
 }
 
+/**
+ * Persiste el nombre del tema activo en localStorage.
+ * @param {string} themeName - Clave del tema (e.g. 'vscode-dark-plus').
+ */
 function saveTheme(themeName) {
     try {
         localStorage.setItem(THEME_STORAGE_KEY, themeName);
@@ -621,6 +694,12 @@ function saveTheme(themeName) {
     }
 }
 
+/**
+ * Aplica un tema: inyecta las variables CSS en `:root`, actualiza los meta tags
+ * de color-scheme y theme-color, actualiza los botones y persiste la elección.
+ * @param {string} themeName - Clave del tema a aplicar.
+ * @param {{ persist?: boolean }} [options]
+ */
 function applyTheme(themeName, options = {}) {
     const { persist = true } = options;
     const selectedTheme = VS_CODE_THEMES[themeName] || VS_CODE_THEMES[DEFAULT_THEME];
@@ -647,6 +726,10 @@ function applyTheme(themeName, options = {}) {
     }
 }
 
+/**
+ * Sincroniza el estado visual (clase `active` y `aria-pressed`) de los botones de tema.
+ * @param {string} activeThemeName - Clave del tema actualmente aplicado.
+ */
 function updateThemeButtons(activeThemeName) {
     document.querySelectorAll('.theme-btn').forEach((button) => {
         const isActive = button.dataset.theme === activeThemeName;
@@ -655,6 +738,11 @@ function updateThemeButtons(activeThemeName) {
     });
 }
 
+// ─── Carga de datos ─────────────────────────────────────────────────────────────
+/**
+ * Orquesta la carga completa del portfolio: inicia las peticiones a data.json
+ * y GitHub API en paralelo, ejecuta la animación de boot y llama a renderPortfolio.
+ */
 async function loadPortfolio() {
     try {
         const dataPromise = fetchData();
@@ -670,6 +758,11 @@ async function loadPortfolio() {
     }
 }
 
+/**
+ * Obtiene y parsea `data/data.json`.
+ * Lanza un error si la respuesta HTTP no es OK.
+ * @returns {Promise<Object>} Datos del portfolio.
+ */
 async function fetchData() {
     const response = await fetch('data/data.json', { cache: 'no-store' });
     if (!response.ok) {
@@ -678,6 +771,11 @@ async function fetchData() {
     return response.json();
 }
 
+/**
+ * Obtiene hasta 100 repositorios públicos del usuario desde la GitHub API.
+ * Aplica un timeout de 5 s y maneja rate-limit (403/429) devolviendo array vacío.
+ * @returns {Promise<Array>} Lista de repositorios o [] ante error/timeout.
+ */
 async function fetchGitHubRepos() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -703,10 +801,20 @@ async function fetchGitHubRepos() {
     }
 }
 
+/**
+ * Filtra la lista de repos para devolver solo los públicos con GitHub Pages activo.
+ * @param {Array} repos - Array de repositorios de la GitHub API.
+ * @returns {Array}
+ */
 function getPublicRepos(repos) {
     return repos.filter(r => !r.private && r.has_pages);
 }
 
+// ─── Animación de boot ──────────────────────────────────────────────────────────
+/**
+ * Muestra una secuencia de mensajes tipo terminal antes de cargar el contenido.
+ * Cada mensaje se escribe carácter a carácter para simular una terminal activa.
+ */
 async function animateBootSequence() {
     const el = stateElements.loading;
     el.innerHTML = '';
@@ -728,6 +836,11 @@ async function animateBootSequence() {
     }
 }
 
+/**
+ * Escribe un texto carácter a carácter en un elemento DOM con un delay de 10 ms.
+ * @param {HTMLElement} el - Elemento destino.
+ * @param {string} text - Texto a escribir.
+ */
 async function typeText(el, text) {
     for (const char of text) {
         el.textContent += char;
@@ -735,10 +848,22 @@ async function typeText(el, text) {
     }
 }
 
+/**
+ * Promesa que resuelve tras `ms` milisegundos. Útil en async/await para pausas.
+ * @param {number} ms - Milisegundos de espera.
+ * @returns {Promise<void>}
+ */
 function sleep(ms) {
     return new Promise(r => setTimeout(r, ms));
 }
 
+// ─── Renderizado ───────────────────────────────────────────────────────────────
+/**
+ * Renderiza el portfolio completo: localiza los datos, construye sidebar y main,
+ * actualiza SEO, inicia animaciones y registra las interacciones de usuario.
+ * @param {Object} data - Datos crudos de data.json.
+ * @param {Array} [repos=[]] - Repositorios de GitHub (sin filtrar).
+ */
 function renderPortfolio(data, repos = []) {
     const localizedData = localizeDeep(data);
 
@@ -763,6 +888,11 @@ function renderPortfolio(data, repos = []) {
     initCounterAnimation();
 }
 
+/**
+ * Construye el HTML del panel lateral: nombre, título animado y sección de media links.
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string} HTML string del sidebar.
+ */
 function buildSidebar(data) {
     const name = escapeHtml(data.personal.name);
 
@@ -775,6 +905,11 @@ function buildSidebar(data) {
 }
 
 // ─── Typing Animation (sidebar title) ──────────────────
+/**
+ * Anima el título en el sidebar con efecto typewriter: escribe y borra cada rol
+ * del array `personal.title` en rotación continua.
+ * @param {Object} data - Datos ya localizados (se usa data.personal.title).
+ */
 function startTypingAnimation(data) {
     const textEl = document.querySelector('.typing-text');
     if (!textEl) return;
@@ -818,6 +953,10 @@ function startTypingAnimation(data) {
 }
 
 // ─── Animated Counters ──────────────────────────────────
+/**
+ * Anima con requestAnimationFrame los contadores numéricos marcados con `data-count-to`.
+ * Va desde 0 hasta el valor destino en aproximadamente 60 frames.
+ */
 function initCounterAnimation() {
     document.querySelectorAll('[data-count-to]').forEach(el => {
         const target = parseInt(el.dataset.countTo, 10);
@@ -836,7 +975,14 @@ function initCounterAnimation() {
     });
 }
 
-// ─── Main Content ────────────────────────────────────────
+// ─── Contenido principal ─────────────────────────────────────────────────────
+/**
+ * Construye el HTML de todas las secciones del portfolio, inyecta la barra de tabs
+ * y devuelve el HTML combinado para insertar en `#main-content`.
+ * @param {Object} data - Datos ya localizados.
+ * @param {Array} [repos=[]] - Array completo de repos de GitHub.
+ * @returns {string} HTML string del contenido principal.
+ */
 function buildMainContent(data, repos = []) {
     const publicRepos = getPublicRepos(repos);
     const certificatesUrl = CERTIFICATES_PDF_URL;
@@ -865,6 +1011,12 @@ function buildMainContent(data, repos = []) {
         .join('');
 }
 
+// ─── Secciones: builders ──────────────────────────────────────────────────────────
+/**
+ * Genera las líneas HTML de la sección PROFILE (nombre, título, email, CV, traits, idiomas).
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]} Array de strings HTML (code-lines).
+ */
 function buildProfileLines(data) {
     const lines = [];
     lines.push(codeLine('<span class="keyword">class</span> <span class="class-name">Profile</span><span class="operator">:</span>'));
@@ -904,6 +1056,16 @@ function buildProfileLines(data) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección STACK (techStack, platforms, tools, media links).
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]}
+ */
+/**
+ * Genera las líneas HTML de la sección STACK (techStack, platforms, tools, media links).
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]}
+ */
 function buildStackLines(data) {
     const lines = [];
     lines.push(blankLine());
@@ -946,6 +1108,13 @@ function buildStackLines(data) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección STATS con contadores animados:
+ * años de experiencia, tecnologías y proyectos en GitHub.
+ * @param {Object} data - Datos ya localizados.
+ * @param {Array} [repos=[]] - Repositorios públicos de GitHub.
+ * @returns {string[]}
+ */
 function buildStatsLines(data, repos = []) {
     const lines = [];
     lines.push(blankLine());
@@ -969,6 +1138,11 @@ function buildStatsLines(data, repos = []) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección EXPERIENCE con tarjetas por cada trabajo.
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]}
+ */
 function buildExperienceLines(data) {
     const lines = [];
     lines.push(blankLine());
@@ -993,6 +1167,11 @@ function buildExperienceLines(data) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección EDUCATION con tarjetas por cada título/curso.
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]}
+ */
 function buildEducationLines(data) {
     const lines = [];
     lines.push(blankLine());
@@ -1017,6 +1196,11 @@ function buildEducationLines(data) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección SERVICES con tarjetas por cada servicio ofrecido.
+ * @param {Object} data - Datos ya localizados.
+ * @returns {string[]}
+ */
 function buildServicesLines(data) {
     const lines = [];
     lines.push(blankLine());
@@ -1037,6 +1221,14 @@ function buildServicesLines(data) {
     return lines;
 }
 
+/**
+ * Genera las líneas HTML de la sección PROJECTS.
+ * Fusiona proyectos definidos en data.json con repos públicos de GitHub
+ * y agrega los controles de filtrado (búsqueda, tipo, tecnología).
+ * @param {Object} data - Datos ya localizados.
+ * @param {Array} [repos=[]] - Repositorios públicos de GitHub.
+ * @returns {string[]}
+ */
 function buildProjectsLines(data, repos = []) {
     const lines = [];
     lines.push(blankLine());
@@ -1114,6 +1306,12 @@ function buildProjectsLines(data, repos = []) {
     return lines;
 }
 
+/**
+ * Genera el HTML del panel de controles de filtrado de proyectos:
+ * input de búsqueda, selects de tipo y tecnología, y contador de resultados.
+ * @param {Array} [projects=[]] - Lista completa de proyectos para extraer opciones.
+ * @returns {string} HTML string de la fila de controles.
+ */
 function buildProjectControlsLine(projects = []) {
     const typeOptions = Array.from(new Set(projects.map((project) => project.type).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
     const techOptions = Array.from(new Set(projects.flatMap((project) => project.stack || []).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
@@ -1139,11 +1337,26 @@ function buildProjectControlsLine(projects = []) {
     return `<div class="code-line project-controls-line"><div class="line-number"></div><div class="code"><div class="project-controls"><input class="project-search" id="project-search" type="search" placeholder="${escapeAttribute(t('projects_search_placeholder'))}" value="${searchValue}" aria-label="${escapeAttribute(t('projects_search_placeholder'))}"><select class="project-select" id="project-type">${typeOptionsHtml}</select><select class="project-select" id="project-tech">${techOptionsHtml}</select><span class="project-results" id="project-results"></span></div></div></div>`;
 }
 
+/**
+ * Genera el HTML de una fila de case study (ej. "Problema: ...").
+ * Devuelve string vacío si no hay valor.
+ * @param {string} label - Etiqueta de la fila (Problema/Solución/Resultado).
+ * @param {string} value - Contenido de la fila.
+ * @returns {string} HTML string o ''.
+ */
 function buildCaseStudyRow(label, value) {
     if (!value) return '';
     return `<div class="case-study-row"><span class="case-study-label">${escapeHtml(label)}:</span><span class="case-study-text">${escapeHtml(value)}</span></div>`;
 }
 
+// ─── Sistema de proyectos ────────────────────────────────────────────────────────
+/**
+ * Fusiona proyectos manuales (data.json) con repositorios de GitHub.
+ * Los proyectos manuales tienen precedencia: sobrescriben campos del repo equivalente.
+ * @param {Array} [manualProjects=[]] - Proyectos definidos en data.json.
+ * @param {Array} [githubProjects=[]] - Repos transformados de la GitHub API.
+ * @returns {Array} Lista fusionada de proyectos.
+ */
 function mergeProjects(manualProjects = [], githubProjects = []) {
     const byKey = new Map();
 
@@ -1160,6 +1373,12 @@ function mergeProjects(manualProjects = [], githubProjects = []) {
     return Array.from(byKey.values());
 }
 
+/**
+ * Devuelve una clave normalizada para identificar proyectos al fusionar listas.
+ * Usa name → url → repoUrl como cascada, en minúsculas sin espacios.
+ * @param {Object} [project={}]
+ * @returns {string}
+ */
 function getProjectMergeKey(project = {}) {
     return (project.name || project.url || project.repoUrl || '')
         .toLowerCase()
@@ -1172,6 +1391,13 @@ const MEDIA_ICONS = {
     default:  `<svg class="media-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3a1 1 0 0 1 1 1v1h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2V4a1 1 0 0 1 2 0v1h2V4a1 1 0 0 1 1-1zM7 9v9h10V9H7z"/></svg>`
 };
 
+// ─── Media / links ───────────────────────────────────────────────────────────────
+/**
+ * Devuelve el SVG inline correspondiente a un enlace de media.
+ * Detecta LinkedIn y GitHub por el label o la URL; cualquier otro usa el icóno genérico.
+ * @param {{ label: string, url: string }} item
+ * @returns {string} SVG HTML string.
+ */
 function getMediaIcon(item) {
     const key = (item.label + item.url).toLowerCase();
     if (key.includes('linkedin')) return MEDIA_ICONS.linkedin;
@@ -1179,6 +1405,12 @@ function getMediaIcon(item) {
     return MEDIA_ICONS.default;
 }
 
+/**
+ * Genera el HTML de la sección de media links en el sidebar.
+ * Devuelve string vacío si el array está vacío.
+ * @param {Array} [media=[]] - Array de objetos { label, url }.
+ * @returns {string} HTML string.
+ */
 function createMediaSection(media = []) {
     if (!media.length) {
         return '';
@@ -1194,10 +1426,23 @@ function createMediaSection(media = []) {
     return `<div class="section"><div class="section-title">${escapeHtml(t('media_title'))}</div><div class="enum-content">${content}</div></div>`;
 }
 
+// ─── Helpers de construcción de HTML ─────────────────────────────────────────────────
+/**
+ * Genera una fila de código con número de línea y contenido HTML.
+ * Los números se asignan dinámicamente por animateCodeLines().
+ * @param {string} content - HTML interno de la celda de código.
+ * @returns {string}
+ */
 function codeLine(content) {
     return `<div class="code-line"><div class="line-number"></div><div class="code">${content}</div></div>`;
 }
 
+/**
+ * Genera una fila con una grilla de badges de tecnologías/plataformas/herramientas.
+ * Cada badge muestra el icóno de Boxicons correspondiente y el nombre del ítem.
+ * @param {string[]} items - Nombres de tecnologías a mostrar.
+ * @returns {string}
+ */
 function skillGridLine(items) {
     const badges = items.map(name => {
         const key = name.toLowerCase();
@@ -1207,6 +1452,12 @@ function skillGridLine(items) {
     return `<div class="code-line skill-grid-line"><div class="line-number"></div><div class="code skill-grid">${badges}</div></div>`;
 }
 
+/**
+ * Genera una fila con la grilla de tarjetas de estadísticas.
+ * Los valores usan `data-count-to` para ser animados por initCounterAnimation().
+ * @param {{ icon: string, label: string, value: number }[]} stats
+ * @returns {string}
+ */
 function statGridLine(stats) {
     const cards = stats.map(({ icon, label, value }) =>
         `<div class="stat-card">
@@ -1218,18 +1469,35 @@ function statGridLine(stats) {
     return `<div class="code-line stat-grid-line"><div class="line-number"></div><div class="code stat-grid">${cards}</div></div>`;
 }
 
+/**
+ * Genera una línea con estilo de comentario de código (color `--comment`).
+ * @param {string} text - Texto del comentario (puede contener HTML ya escapado).
+ * @returns {string}
+ */
 function commentLine(text) {
     return codeLine(`<span class="comment">${text}</span>`);
 }
 
+/** Genera una línea numerada vacía para separar bloques de código. */
 function blankLine() {
     return codeLine('');
 }
 
+/**
+ * Genera una fila contenedora de tarjetas (`.card-grid`) para secciones
+ * como EXPERIENCE, EDUCATION, SERVICES y PROJECTS.
+ * @param {string} cardsHtml - HTML interno ya construido con las tarjetas.
+ * @returns {string}
+ */
 function cardGridLine(cardsHtml) {
     return `<div class="code-line card-grid-line"><div class="line-number"></div><div class="code card-grid">${cardsHtml}</div></div>`;
 }
 
+// ─── Animaciones ──────────────────────────────────────────────────────────────────
+/**
+ * Registra un IntersectionObserver para animar las secciones con clase `animate-in`
+ * cuando entran en el viewport (agrega clase `visible` que dispara la transición CSS).
+ */
 function initScrollAnimations() {
     const sections = document.querySelectorAll('.code-section');
     if (!sections.length) return;
@@ -1252,6 +1520,10 @@ function initScrollAnimations() {
     });
 }
 
+/**
+ * Asigna números de línea correlativos a cada `.code-line` y aplica la
+ * animación de aparición `slideIn` con delay escalonado. Añade el cursor al final.
+ */
 function animateCodeLines() {
     const lines = document.querySelectorAll('.code-line');
 
@@ -1275,6 +1547,13 @@ function animateCodeLines() {
     }
 }
 
+// ─── Interacciones del usuario ──────────────────────────────────────────────────────
+/**
+ * Registra todos los listeners de interacción tras cada renderizado:
+ * - Copiar al portapapeles (data-copy)
+ * - Navegación por tabs y scroll activo
+ * - Delegación a filtros de proyectos
+ */
 function initializeInteractions() {
     document.querySelectorAll('[data-copy]').forEach((element) => {
         const doCopy = async (event) => {
@@ -1369,6 +1648,10 @@ function initializeInteractions() {
     updateActiveTab();
 }
 
+/**
+ * Registra los filtros de la sección PROJECTS: búsqueda por texto, tipo y tecnología.
+ * Restaura los filtros guardados en localStorage y actualiza la visibilidad de tarjetas.
+ */
 function initializeProjectFilters() {
     const searchInput = document.getElementById('project-search');
     const typeSelect = document.getElementById('project-type');
@@ -1443,6 +1726,12 @@ function initializeProjectFilters() {
     applyFilters();
 }
 
+// ─── Command palette ───────────────────────────────────────────────────────────────
+/**
+ * Inicializa el command palette (atajo Ctrl+K / ⌘K).
+ * Registra los listeners globales de teclado y los de clic en overlay, input y lista.
+ * Solo se llama una vez al inicio (DOMContentLoaded).
+ */
 function initializeCommandPalette() {
     const overlay = document.getElementById('command-overlay');
     const palette = document.getElementById('command-palette');
@@ -1514,6 +1803,10 @@ function initializeCommandPalette() {
     });
 }
 
+/**
+ * Abre el command palette: muestra overlay y panel, enfoca el input
+ * y renderiza las entradas disponibles. Guarda el elemento activo para restaurarlo.
+ */
 function openCommandPalette() {
     const overlay = document.getElementById('command-overlay');
     const palette = document.getElementById('command-palette');
@@ -1536,6 +1829,10 @@ function openCommandPalette() {
     renderCommandEntries();
 }
 
+/**
+ * Cierra el command palette con animación CSS (`closing`).
+ * Restaura el foco al elemento que estaba activo antes de abrirlo.
+ */
 function closeCommandPalette() {
     const overlay = document.getElementById('command-overlay');
     const palette = document.getElementById('command-palette');
@@ -1557,6 +1854,11 @@ function closeCommandPalette() {
     }, { once: true });
 }
 
+/**
+ * Devuelve el array de comandos disponibles en el command palette.
+ * Incluye: navegar a sección, cambiar tema/idioma, copiar email, descargar CV, ver certificados.
+ * @returns {{ label: string, keywords: string, action: Function }[]}
+ */
 function getCommandEntries() {
     const sectionIds = ['profile', 'stack', 'stats', 'experience', 'education', 'services', 'projects'];
     const entries = sectionIds.map((sectionId) => ({
@@ -1614,6 +1916,10 @@ function getCommandEntries() {
     return entries;
 }
 
+/**
+ * Filtra los comandos según el texto del input y los renderiza en la lista.
+ * Aplica normalización para búsqueda insensible a tildes y mayúsculas.
+ */
 function renderCommandEntries() {
     const list = document.getElementById('command-list');
     const input = document.getElementById('command-input');
@@ -1644,6 +1950,8 @@ function renderCommandEntries() {
     }).join('');
 }
 
+// ─── Ciclo de tema / idioma ───────────────────────────────────────────────────────────
+/** Rota al siguiente tema disponible en orden circular (Dark+ → Monokai → Abyss → ...). */
 function cycleTheme() {
     const themes = Object.keys(VS_CODE_THEMES);
     const currentTheme = document.querySelector('.theme-btn.active')?.dataset.theme || DEFAULT_THEME;
@@ -1652,12 +1960,17 @@ function cycleTheme() {
     applyTheme(nextTheme);
 }
 
+/** Rota al siguiente idioma disponible en orden circular (es → en → de → ja → ...). */
 function cycleLanguage() {
     const currentIndex = SUPPORTED_LANGS.indexOf(currentLang);
     const nextLang = SUPPORTED_LANGS[(currentIndex + 1) % SUPPORTED_LANGS.length];
     setLanguage(nextLang);
 }
 
+/**
+ * Desplaza el contenedor `.main-content` hasta la sección identificada por `sectionId`.
+ * @param {string} sectionId - ID del elemento destino (e.g. 'profile', 'projects').
+ */
 function scrollToSection(sectionId) {
     const target = document.getElementById(sectionId);
     const mainContent = document.querySelector('.main-content');
@@ -1670,6 +1983,13 @@ function scrollToSection(sectionId) {
     mainContent.scrollTo({ top: offset, behavior: 'smooth' });
 }
 
+// ─── Utilidades ──────────────────────────────────────────────────────────────────
+/**
+ * Normaliza un string para búsqueda: elimina tildes (NFD), convierte a minúsculas y recorta.
+ * Ejemplo: 'Café' → 'cafe'.
+ * @param {string} [value='']
+ * @returns {string}
+ */
 function normalizeSearchText(value = '') {
     return String(value)
         .normalize('NFD')
@@ -1678,12 +1998,22 @@ function normalizeSearchText(value = '') {
         .trim();
 }
 
+/**
+ * Registra el handler de error en la imagen de perfil.
+ * Si la imagen falla al cargar, agrega la clase `missing-image` al frame,
+ * lo que hace visible el fallback con las iniciales del nombre (vía CSS).
+ */
 function initializeProfileImageFallback() {
     stateElements.profileImage.addEventListener('error', () => {
         stateElements.profileImage.closest('.profile-frame').classList.add('missing-image');
     });
 }
 
+/**
+ * Construye y muestra la barra de estado inferior estilo VSCode.
+ * Muestra: lenguaje, encoding, líneas totales, sección activa y atajo del command palette.
+ * Inicializa el botón de imprimir/PDF.
+ */
 function initStatusBar() {
     const totalLines = document.querySelectorAll('.code-line').length;
     const isMac = navigator.platform.toUpperCase().includes('MAC');
@@ -1735,6 +2065,11 @@ function initStatusBar() {
     }
 }
 
+/**
+ * Muestra un mensaje de error en el área de carga del portfolio.
+ * Agrega una sugerencia adicional si el protocolo es `file://`.
+ * @param {Error} error - Error capturado en loadPortfolio.
+ */
 function showError(error) {
     const hint = window.location.protocol === 'file:'
         ? t('load_error_hint')
@@ -1743,6 +2078,10 @@ function showError(error) {
     stateElements.loading.textContent = `${t('load_error_ui')}: ${error.message}.${hint}`;
 }
 
+/**
+ * Muestra un toast flotante con `message` durante ~1.8 s y lo elimina del DOM.
+ * @param {string} message - Mensaje a mostrar.
+ */
 function showToast(message) {
     const toast = document.createElement('div');
     toast.className = 'toast';
@@ -1759,6 +2098,11 @@ function showToast(message) {
     }, 1800);
 }
 
+/**
+ * Actualiza dinámicamente el SEO: `<title>`, meta description,
+ * Open Graph, Twitter Cards y el bloque JSON-LD de schema.org (tipo Person).
+ * @param {Object} localizedData - Datos ya localizados del portfolio.
+ */
 function updateSeo(localizedData) {
     const title = `${localizedData.personal.name} - ${t('seo_title')}`;
     const description = localizedData.summary || t('seo_description');
@@ -1800,18 +2144,40 @@ function updateSeo(localizedData) {
     structuredDataNode.textContent = JSON.stringify(structuredData);
 }
 
+// ─── Traducciones + localización ─────────────────────────────────────────────────────────
+/**
+ * Resuelve una clave de traducción en el idioma activo (`currentLang`).
+ * Fallback a español y luego a la propia clave si no existe traducción.
+ * @param {string} key - Clave de I18N.
+ * @returns {string}
+ */
 function t(key) {
     return I18N[currentLang]?.[key] || I18N.es[key] || key;
 }
 
+/**
+ * Devuelve la etiqueta traducida de una sección por su ID (e.g. 'profile' → 'PROFILE').
+ * @param {string} sectionId
+ * @returns {string}
+ */
 function getSectionLabel(sectionId) {
     return t(`section_${sectionId}`);
 }
 
+/**
+ * Devuelve el locale BCP 47 del idioma activo (e.g. 'es-AR', 'en-US', 'de-DE', 'ja-JP').
+ * @returns {string}
+ */
 function getCurrentLocale() {
     return LOCALE_BY_LANG[currentLang] || LOCALE_BY_LANG.es;
 }
 
+/**
+ * Devuelve true si el objeto es un mapa de idiomas (todas sus claves son idiomas soportados).
+ * Ejemplo: { es: '...', en: '...', de: '...', ja: '...' } → true.
+ * @param {*} value
+ * @returns {boolean}
+ */
 function isLanguageMap(value) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
         return false;
@@ -1820,6 +2186,12 @@ function isLanguageMap(value) {
     return keys.length > 0 && keys.every((key) => SUPPORTED_LANGS.includes(key));
 }
 
+/**
+ * Recorre recursivamente cualquier valor (objeto, array, primitivo) y resuelve
+ * todos los language maps al idioma activo. Preserva arrays y objetos no-lingüísticos.
+ * @param {*} value - Valor a localizar.
+ * @returns {*} Valor con todos los language maps reemplazados por el string del idioma activo.
+ */
 function localizeDeep(value) {
     if (Array.isArray(value)) {
         return value.map((item) => localizeDeep(item));
@@ -1838,11 +2210,23 @@ function localizeDeep(value) {
     );
 }
 
+/**
+ * Genera el HTML de un array estilo Python con sus elementos como strings coloreados.
+ * Ejemplo: ["HTML", "CSS"] → `["HTML", "CSS"]` con clases de sintaxis.
+ * @param {string[]} [items=[]]
+ * @returns {string}
+ */
 function buildStringArray(items = []) {
     const values = items.map((item) => `<span class="string">"${escapeHtml(item)}"</span>`).join('<span class="operator">, </span>');
     return `<span class="bracket">[</span>${values}<span class="bracket">]</span>`;
 }
 
+/**
+ * Extrae las dos primeras iniciales en mayúscula de un nombre completo.
+ * Ejemplo: "Martín Pentito" → "MP".
+ * @param {string} [name='']
+ * @returns {string}
+ */
 function getInitials(name = '') {
     return name
         .split(' ')
@@ -1852,6 +2236,12 @@ function getInitials(name = '') {
         .join('');
 }
 
+/**
+ * Convierte un string a snake_case sin tildes ni caracteres especiales.
+ * Ejemplo: "Martín Pentito" → "martin_pentito".
+ * @param {string} [value='']
+ * @returns {string}
+ */
 function toSnakeCaseName(value = '') {
     return value
         .normalize('NFD')
@@ -1862,6 +2252,13 @@ function toSnakeCaseName(value = '') {
         .toLowerCase();
 }
 
+// ─── Seguridad: escape de HTML ─────────────────────────────────────────────────────────
+/**
+ * Escapa los 5 caracteres HTML peligrosos (&, <, >, ", ') para prevenir XSS
+ * al insertar strings de datos del usuario en el DOM vía innerHTML.
+ * @param {string} [value='']
+ * @returns {string}
+ */
 function escapeHtml(value = '') {
     return String(value)
         .replace(/&/g, '&amp;')
@@ -1871,6 +2268,12 @@ function escapeHtml(value = '') {
         .replace(/'/g, '&#39;');
 }
 
+/**
+ * Alias semántico de escapeHtml para uso explícito en atributos HTML
+ * (e.g. href, data-*, aria-label). Aplica el mismo escapado.
+ * @param {string} [value='']
+ * @returns {string}
+ */
 function escapeAttribute(value = '') {
     return escapeHtml(value);
 }

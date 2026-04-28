@@ -1,6 +1,22 @@
+/**
+ * @file sw.js
+ * @description Service Worker del portfolio de Martín Pentito (PWA).
+ *
+ * Estrategias de caché por tipo de recurso:
+ *   - Activos locales (HTML, CSS, JS, imágenes): cache-first (más rápido offline)
+ *   - data.json: network-first (siempre intenta actualizar, cae a caché si offline)
+ *   - GitHub API: network-first con fallback al último response cacheado
+ *   - CDN externo (Boxicons): solo red, sin cachear
+ *
+ * El nombre `CACHE_NAME` debe incrementarse al desplegar cambios importantes
+ * para que los clientes existentes reciban la nueva versión.
+ */
+
 // ─── Service Worker — Portfolio PWA ────────────────────────────────────────
 const CACHE_NAME = 'mp-portfolio-v1';
 
+// Lista de activos que se precargan durante la instalación (app shell).
+// Estos recursos estarán disponibles offline desde el primer uso.
 const PRECACHE_ASSETS = [
     './',
     './index.html',
@@ -14,7 +30,9 @@ const PRECACHE_ASSETS = [
     './manifest.json'
 ];
 
-// ── Instalación: precachear activos del shell ──
+// ── Instalación: precachear el app shell ──
+// Se ejecuta una vez al registrar el SW. Descarga y cachea todos los activos
+// del array PRECACHE_ASSETS. skipWaiting() activa el nuevo SW inmediatamente.
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
@@ -22,7 +40,9 @@ self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
-// ── Activación: eliminar cachés obsoletas ──
+// ── Activación: limpiar cachés obsoletas ──
+// Elimina cachés de versiones anteriores (cualquier clave distinta a CACHE_NAME).
+// clients.claim() toma el control de todas las pestañas abiertas sin recargar.
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) =>
@@ -36,7 +56,7 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// ── Fetch: estrategia por tipo de recurso ──
+// ── Fetch: interceptar peticiones y aplicar la estrategia según origen/tipo ──
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
