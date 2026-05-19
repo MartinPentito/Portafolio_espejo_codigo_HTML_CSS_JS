@@ -1236,7 +1236,7 @@ function buildProjectsLines(data, repos = []) {
     lines.push(blankLine());
 
     const manualProjects = data.projects || [];
-    const githubProjects = repos.map((r) => ({
+    const projects = manualProjects.length ? manualProjects : mergeProjects(manualProjects, repos.map((r) => ({
         name: r.name,
         description: r.description || t('project_no_description'),
         type: t('project_type_github'),
@@ -1244,8 +1244,7 @@ function buildProjectsLines(data, repos = []) {
         url: r.homepage || `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/`,
         repoUrl: r.html_url,
         updated: r.updated_at
-    }));
-    const projects = mergeProjects(manualProjects, githubProjects);
+    })));
 
     if (!projects.length) {
         lines.push(commentLine(`&nbsp;&nbsp;&nbsp;&nbsp;# ${escapeHtml(t('projects_none'))}`));
@@ -1313,16 +1312,7 @@ function buildProjectsLines(data, repos = []) {
  * @returns {string} HTML string de la fila de controles.
  */
 function buildProjectControlsLine(projects = []) {
-    const typeOptions = Array.from(new Set(projects.map((project) => project.type).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
     const techOptions = Array.from(new Set(projects.flatMap((project) => project.stack || []).filter(Boolean))).sort((a, b) => a.localeCompare(b, getCurrentLocale()));
-
-    const typeOptionsHtml = [`<option value="">${escapeHtml(t('projects_all_types'))}</option>`]
-        .concat(typeOptions.map((value) => {
-            const normalized = normalizeSearchText(value);
-            const selected = appState.projectFilters.type === normalized ? ' selected' : '';
-            return `<option value="${escapeAttribute(normalized)}"${selected}>${escapeHtml(value)}</option>`;
-        }))
-        .join('');
 
     const techOptionsHtml = [`<option value="">${escapeHtml(t('projects_all_tech'))}</option>`]
         .concat(techOptions.map((value) => {
@@ -1334,7 +1324,7 @@ function buildProjectControlsLine(projects = []) {
 
     const searchValue = escapeAttribute(appState.projectFilters.query || '');
 
-    return `<div class="code-line project-controls-line"><div class="line-number"></div><div class="code"><div class="project-controls"><input class="project-search" id="project-search" type="search" placeholder="${escapeAttribute(t('projects_search_placeholder'))}" value="${searchValue}" aria-label="${escapeAttribute(t('projects_search_placeholder'))}"><select class="project-select" id="project-type">${typeOptionsHtml}</select><select class="project-select" id="project-tech">${techOptionsHtml}</select><span class="project-results" id="project-results"></span></div></div></div>`;
+    return `<div class="code-line project-controls-line"><div class="line-number"></div><div class="code"><div class="project-controls"><input class="project-search" id="project-search" type="search" placeholder="${escapeAttribute(t('projects_search_placeholder'))}" value="${searchValue}" aria-label="${escapeAttribute(t('projects_search_placeholder'))}"><select class="project-select" id="project-tech">${techOptionsHtml}</select><span class="project-results" id="project-results"></span></div></div></div>`;
 }
 
 /**
@@ -1654,13 +1644,12 @@ function initializeInteractions() {
  */
 function initializeProjectFilters() {
     const searchInput = document.getElementById('project-search');
-    const typeSelect = document.getElementById('project-type');
     const techSelect = document.getElementById('project-tech');
     const cards = Array.from(document.querySelectorAll('.project-card'));
     const results = document.getElementById('project-results');
     const emptyState = document.getElementById('project-filter-empty');
 
-    if (!searchInput || !typeSelect || !techSelect || !cards.length) {
+    if (!searchInput || !techSelect || !cards.length) {
         return;
     }
 
@@ -1673,22 +1662,20 @@ function initializeProjectFilters() {
     }
     if (savedFilters) {
         searchInput.value = savedFilters.rawQuery || '';
-        typeSelect.value = savedFilters.type || '';
         techSelect.value = savedFilters.tech || '';
         appState.projectFilters.query = normalizeSearchText(savedFilters.rawQuery || '');
-        appState.projectFilters.type = savedFilters.type || '';
+        appState.projectFilters.type = '';
         appState.projectFilters.tech = savedFilters.tech || '';
     }
 
     const applyFilters = () => {
         appState.projectFilters.query = normalizeSearchText(searchInput.value || '');
-        appState.projectFilters.type = typeSelect.value || '';
+        appState.projectFilters.type = '';
         appState.projectFilters.tech = techSelect.value || '';
 
         try {
             localStorage.setItem('portfolio-filters', JSON.stringify({
                 rawQuery: searchInput.value || '',
-                type: appState.projectFilters.type,
                 tech: appState.projectFilters.tech
             }));
         } catch (error) {
@@ -1699,9 +1686,8 @@ function initializeProjectFilters() {
 
         cards.forEach((card) => {
             const queryMatches = !appState.projectFilters.query || (card.dataset.projectSearch || '').includes(appState.projectFilters.query);
-            const typeMatches = !appState.projectFilters.type || card.dataset.projectType === appState.projectFilters.type;
             const techMatches = !appState.projectFilters.tech || (card.dataset.projectStack || '').includes(appState.projectFilters.tech);
-            const visible = queryMatches && typeMatches && techMatches;
+            const visible = queryMatches && techMatches;
 
             card.hidden = !visible;
             if (visible) visibleCount += 1;
@@ -1720,7 +1706,6 @@ function initializeProjectFilters() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(applyFilters, 250);
     });
-    typeSelect.addEventListener('change', applyFilters);
     techSelect.addEventListener('change', applyFilters);
 
     applyFilters();

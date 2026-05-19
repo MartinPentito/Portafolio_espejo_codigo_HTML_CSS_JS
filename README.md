@@ -27,13 +27,12 @@ Portafolio_espejo_codigo_HTML_CSS_JS/
     └── Certificados.pdf               # Certificados en PDF
 ```
 
----
+> En producción, `index.html` carga las versiones compactas:
+> - `css/styles.min.css`
+> - `js/script.min.js`
+> 
+> Los archivos `css/styles.css` y `js/script.js` se conservan como fuente de desarrollo.
 
-## Cómo funciona
-
-1. **`index.html`** define la estructura base (shell vacío).  
-2. **`js/script.js`** carga `data/data.json` y la GitHub API en paralelo, anima el boot y renderiza el contenido como bloques de código Python estilizado.  
-3. **`css/styles.css`** aplica la estética de editor con variables CSS intercambiables por tema.  
 4. **`sw.js`** intercepta las peticiones y aplica estrategias de caché diferenciadas.
 
 ---

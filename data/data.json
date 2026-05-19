@@ -313,61 +313,14 @@
         "ja": "作曲"
       },
       "description": {
-        "es": "Estudio Musical - HippieCave",
-        "en": "Music Studio - HippieCave",
-        "de": "Musikstudio - HippieCave",
-        "ja": "音楽スタジオ - HippieCave"
+        "es": "Estudio Musical - JipiCueva",
+        "en": "Music Studio - JipiCueva",
+        "de": "Musikstudio - JipiCueva",
+        "ja": "音楽スタジオ - JipiCueva"
       }
     }
   ],
   "projects": [
-    {
-      "name": "Personal Portfolio",
-      "type": {
-        "es": "Proyecto personal",
-        "en": "Personal project",
-        "de": "Personliches Projekt",
-        "ja": "個人プロジェクト"
-      },
-      "stack": ["HTML", "CSS", "JavaScript", "Tailwind", "GitHub API"],
-      "description": {
-        "es": "Portfolio personal con secciones Home, Services, Resume y Work. Integra la GitHub API para mostrar proyectos publicados en GitHub Pages.",
-        "en": "Personal portfolio with Home, Services, Resume, and Work sections. Integrates GitHub API to display projects published on GitHub Pages.",
-        "de": "Personliches Portfolio mit den Bereichen Home, Services, Resume und Work. Integriert die GitHub API, um auf GitHub Pages veroffentlichte Projekte anzuzeigen.",
-        "ja": "Home、Services、Resume、Workで構成された個人ポートフォリオ。GitHub APIを連携し、GitHub Pagesの公開プロジェクトを表示。"
-      },
-      "role": {
-        "es": "Diseno UX/UI y desarrollo frontend",
-        "en": "UX/UI design and frontend development",
-        "de": "UX/UI-Design und Frontend-Entwicklung",
-        "ja": "UX/UI設計とフロントエンド開発"
-      },
-      "duration": {
-        "es": "3 semanas",
-        "en": "3 weeks",
-        "de": "3 Wochen",
-        "ja": "3週間"
-      },
-      "challenge": {
-        "es": "Construir un portfolio modular que mostrara trabajos en tiempo real sin depender de actualizaciones manuales.",
-        "en": "Build a modular portfolio that showed work in real time without manual updates.",
-        "de": "Ein modulares Portfolio erstellen, das Arbeiten in Echtzeit ohne manuelle Aktualisierung zeigt.",
-        "ja": "手動更新に頼らず、実績をリアルタイムで表示できるモジュラー型ポートフォリオの構築。"
-      },
-      "solution": {
-        "es": "Diseno de componentes reutilizables y consumo de la GitHub API para renderizar proyectos dinamicamente.",
-        "en": "Designed reusable components and consumed the GitHub API to render projects dynamically.",
-        "de": "Wiederverwendbare Komponenten entworfen und die GitHub API genutzt, um Projekte dynamisch darzustellen.",
-        "ja": "再利用可能なコンポーネントを設計し、GitHub APIでプロジェクトを動的に描画。"
-      },
-      "result": {
-        "es": "Reduccion del tiempo de mantenimiento y actualizacion automatica de contenido en cada deploy.",
-        "en": "Reduced maintenance time and enabled automatic content updates on each deploy.",
-        "de": "Wartungszeit reduziert und automatische Inhaltsaktualisierung bei jedem Deploy ermoglicht.",
-        "ja": "保守時間を削減し、デプロイごとのコンテンツ自動更新を実現。"
-      },
-      "url": "https://martinpentito.github.io/Personal_Portfolio/"
-    },
     {
       "name": "Portfolio espejo",
       "type": {
@@ -413,54 +366,8 @@
         "de": "Schnellere Inhaltsbearbeitung und geringeres Fehlerrisiko bei Abschnittsaktualisierungen.",
         "ja": "コンテンツ編集を高速化し、セクション更新時のエラーリスクを低減。"
       },
-      "url": "https://github.com/MartinPentito/Portafolio_espejo_codigo_HTML_CSS_JS"
-    },
-    {
-      "name": "Game Designer Portfolio",
-      "type": {
-        "es": "Proyecto para cliente",
-        "en": "Client project",
-        "de": "Kundenprojekt",
-        "ja": "クライアントプロジェクト"
-      },
-      "stack": ["HTML", "CSS", "JavaScript", "GitHub Pages"],
-      "description": {
-        "es": "Portfolio para un disenador narrativo y de juegos, publicado con GitHub Pages.",
-        "en": "Portfolio for a narrative and game designer, published with GitHub Pages.",
-        "de": "Portfolio fur einen Narrative- und Game-Designer, veroffentlicht auf GitHub Pages.",
-        "ja": "ナラティブ／ゲームデザイナー向けポートフォリオをGitHub Pagesで公開。"
-      },
-      "role": {
-        "es": "Desarrollo frontend y publicacion",
-        "en": "Frontend development and publishing",
-        "de": "Frontend-Entwicklung und Veroffentlichung",
-        "ja": "フロントエンド開発と公開"
-      },
-      "duration": {
-        "es": "10 dias",
-        "en": "10 days",
-        "de": "10 Tage",
-        "ja": "10日"
-      },
-      "challenge": {
-        "es": "Transmitir identidad creativa del cliente sin perder claridad en navegacion.",
-        "en": "Convey the client's creative identity without losing navigation clarity.",
-        "de": "Die kreative Identitat des Kunden vermitteln, ohne die Navigationsklarheit zu verlieren.",
-        "ja": "ナビゲーションの明瞭さを保ちながら、クライアントの創造性を表現すること。"
-      },
-      "solution": {
-        "es": "Estructura de secciones narrativa con jerarquia visual clara y enfoque mobile-first.",
-        "en": "Built a narrative section structure with clear visual hierarchy and a mobile-first approach.",
-        "de": "Narrative Abschnittsstruktur mit klarer visueller Hierarchie und Mobile-First-Ansatz umgesetzt.",
-        "ja": "明確な視覚階層とモバイルファーストを軸に、物語性のあるセクション構成を設計。"
-      },
-      "result": {
-        "es": "Presentacion profesional del perfil del cliente y entrega lista para compartir en procesos de seleccion.",
-        "en": "Delivered a professional client profile presentation ready to share in hiring processes.",
-        "de": "Professionelle Darstellung des Kundenprofils bereitgestellt, einsatzbereit fur Bewerbungsprozesse.",
-        "ja": "採用プロセスで共有可能な、プロ仕様のプロフィール提示を実現。"
-      },
-      "url": "https://martinpentito.github.io/portfolio_react_dante/"
+      "url": "https://martinpentito.github.io/Portafolio_espejo_codigo_HTML_CSS_JS/",
+      "repoUrl": "https://github.com/MartinPentito/Portafolio_espejo_codigo_HTML_CSS_JS"
     },
     {
       "name": "Laincop iPhone Catalog",
@@ -507,7 +414,8 @@
         "de": "Schnellere Kontaktaufnahme zwischen potenziellen Kunden und Verkaufer erreicht.",
         "ja": "見込み客と販売者の接触スピードを向上。"
       },
-      "url": "https://martinpentito.github.io/catalogo-laincop-iphones/"
+      "url": "https://martinpentito.github.io/catalogo-laincop-iphones/",
+      "repoUrl": "https://github.com/MartinPentito/catalogo-laincop-iphones"
     }
   ]
 }
