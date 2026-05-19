@@ -96,8 +96,8 @@ const I18N = {
         seo_title: 'Portfolio de Martin Pentito',
         seo_description: 'Portfolio tecnico de Martin Pentito: desarrollo web, soporte tecnico y proyectos reales.',
         print_pdf: 'Imprimir / PDF',
-        project_type_github: 'Proyecto open source · GitHub Pages',
-        project_no_description: 'Repositorio publico en GitHub.',
+        project_type_github: 'Repositorio público · GitHub',
+        project_no_description: 'Repositorio público en GitHub.',
         years_of_experience: 'Años de experiencia',
         technologies: 'Tecnologías',
         github_projects: 'Proyectos'
@@ -166,7 +166,7 @@ const I18N = {
         seo_title: 'Martin Pentito Portfolio',
         seo_description: 'Technical portfolio of Martin Pentito: web development, technical support, and real projects.',
         print_pdf: 'Print / PDF',
-        project_type_github: 'Open source project · GitHub Pages',
+        project_type_github: 'Public GitHub repository',
         project_no_description: 'Public repository on GitHub.',
         years_of_experience: 'Years of experience',
         technologies: 'Technologies',
@@ -236,7 +236,7 @@ const I18N = {
         seo_title: 'Portfolio von Martin Pentito',
         seo_description: 'Technisches Portfolio von Martin Pentito: Webentwicklung, technischer Support und reale Projekte.',
         print_pdf: 'Drucken / PDF',
-        project_type_github: 'Open-Source-Projekt · GitHub Pages',
+        project_type_github: 'Öffentliches GitHub-Repository',
         project_no_description: 'Offentliches Repository auf GitHub.',
         years_of_experience: 'Jahre Erfahrung',
         technologies: 'Technologien',
@@ -306,7 +306,7 @@ const I18N = {
         seo_title: 'Martin Pentito のポートフォリオ',
         seo_description: 'Martin Pentito の技術ポートフォリオ。Web開発、技術サポート、実案件。',
         print_pdf: '印刷 / PDF',
-        project_type_github: 'オープンソース · GitHub Pages',
+        project_type_github: '公開GitHubリポジトリ',
         project_no_description: 'GitHubの公開リポジトリ。',
         years_of_experience: '経験年数',
         technologies: '技術',
@@ -807,7 +807,7 @@ async function fetchGitHubRepos() {
  * @returns {Array}
  */
 function getPublicRepos(repos) {
-    return repos.filter(r => !r.private && r.has_pages);
+    return repos.filter(r => !r.private);
 }
 
 // ─── Animación de boot ──────────────────────────────────────────────────────────
@@ -1236,12 +1236,12 @@ function buildProjectsLines(data, repos = []) {
     lines.push(blankLine());
 
     const manualProjects = data.projects || [];
-    const projects = manualProjects.length ? manualProjects : mergeProjects(manualProjects, repos.map((r) => ({
+    const projects = mergeProjects(manualProjects, repos.map((r) => ({
         name: r.name,
         description: r.description || t('project_no_description'),
         type: t('project_type_github'),
         stack: r.topics || [],
-        url: r.homepage || `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/`,
+        url: r.homepage || (r.has_pages ? `https://${GITHUB_USER.toLowerCase()}.github.io/${r.name}/` : ''),
         repoUrl: r.html_url,
         updated: r.updated_at
     })));

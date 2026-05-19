@@ -138,7 +138,8 @@ Atajo `Ctrl+K` / `⌘K` (o clic en el hint del statusbar).
 Comandos disponibles: navegar a sección, cambiar tema/idioma, copiar email, descargar CV, ver certificados.
 
 ### GitHub API
-Carga automáticamente los repositorios públicos con GitHub Pages activado.  
+Carga automáticamente los repositorios públicos de GitHub en la sección de proyectos.  
+Los proyectos manuales en `data.json` se mezclan con los repositorios públicos; los manuales tienen precedencia si coinciden por nombre.  
 Timeout de 5 s; si la API falla o aplica rate-limit (403/429), el portfolio carga igualmente.
 
 ### PWA (Service Worker)

@@ -295,13 +295,20 @@ body {
 
 .nav-tab:hover {
     color: var(--text-main);
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(255, 255, 255, 0.12);
+    border-bottom-color: rgba(var(--accent-rgb), 0.20);
 }
 
 .nav-tab.active {
     color: var(--text-main);
     border-top-color: var(--accent);
     background-color: var(--bg-main);
+}
+
+.nav-tab.active:hover {
+    color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: rgba(var(--accent-rgb), 0.20);
 }
 
 .theme-switcher {
