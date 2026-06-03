@@ -452,6 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCommandPalette();
     initializeProfileImageFallback();
     initializeMobileSidebarToggle();
+    initializeMusicPlayer();
+    initializePlasmaWave();
     loadPortfolio();
 });
 
@@ -518,6 +520,390 @@ function saveLanguage(lang) {
     } catch (error) {
         // Ignore storage errors (private mode / blocked storage)
     }
+}
+
+const MUSIC_PLAYER_CONFIG = {
+    storageKey: 'portfolio-music-index',
+    playlistUrl: 'songs/playlist.json',
+    defaultPlaylist: [
+        'songs/song1.mp3',
+        'songs/song2.mp3',
+        'songs/song3.mp3'
+    ]
+};
+
+const musicPlayer = {
+    audio: null,
+    playlist: [],
+    currentIndex: 0,
+    elements: {}
+};
+
+function initializeMusicPlayer() {
+    const root = document.getElementById('music-player');
+    if (!root) return;
+
+    musicPlayer.elements = {
+        root,
+        status: root.querySelector('#music-player-status'),
+        trackTitle: root.querySelector('#music-player-track'),
+        playPause: root.querySelector('.music-player-play-pause'),
+        prev: root.querySelector('.music-player-prev'),
+        next: root.querySelector('.music-player-next'),
+        audio: document.getElementById('music-player-audio')
+    };
+
+    const { audio, status } = musicPlayer.elements;
+    if (!audio) return;
+
+    musicPlayer.audio = audio;
+    audio.preload = 'metadata';
+    audio.volume = 0.7;
+    audio.addEventListener('ended', handleNextTrack);
+    audio.addEventListener('play', updateMusicPlayerButtons);
+    audio.addEventListener('pause', updateMusicPlayerButtons);
+    audio.addEventListener('error', () => {
+        if (status) {
+            status.textContent = 'Error cargando la pista';
+        }
+    });
+
+    root.addEventListener('click', (event) => {
+        if (event.target.closest('.music-player-prev')) {
+            event.preventDefault();
+            handlePrevTrack();
+        } else if (event.target.closest('.music-player-next')) {
+            event.preventDefault();
+            handleNextTrack();
+        } else if (event.target.closest('.music-player-play-pause')) {
+            event.preventDefault();
+            toggleMusicPlayback();
+        }
+    });
+
+    loadMusicPlaylist().then(() => {
+        if (musicPlayer.playlist.length === 0) {
+            if (status) {
+                status.textContent = 'No hay canciones en songs/ para reproducir';
+            }
+            return;
+        }
+
+        const savedIndex = Number(localStorage.getItem(MUSIC_PLAYER_CONFIG.storageKey));
+        const initialIndex = Number.isInteger(savedIndex) && savedIndex >= 0 && savedIndex < musicPlayer.playlist.length
+            ? savedIndex
+            : 0;
+
+        setMusicTrack(initialIndex, false);
+    });
+}
+
+function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    return [r, g, b];
+}
+
+const PLASMA_WAVE_SHADER = {
+    vertex: `
+attribute vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}
+`,
+    fragment: `
+precision mediump float;
+uniform float iTime;
+uniform vec2 iResolution;
+uniform vec2 uOffset;
+uniform float uRotation;
+uniform float uFocalLength;
+uniform float uSpeed1;
+uniform float uSpeed2;
+uniform float uDir2;
+uniform float uBend1;
+uniform float uBend2;
+uniform vec3 uColor1;
+uniform vec3 uColor2;
+
+const float lt = 0.3;
+const float pi = 3.14159;
+const float pi2 = 6.28318;
+const float pi_2 = 1.5708;
+#define MAX_STEPS 14
+
+void mainImage(out vec4 C, in vec2 U) {
+  float t = iTime * pi;
+  float s = 1.0;
+  float d = 0.0;
+  vec2 R = iResolution;
+
+  vec3 o = vec3(0.0, 0.0, -7.0);
+  vec3 u = normalize(vec3((U - 0.5 * R) / R.y, uFocalLength));
+  vec2 k = vec2(0.0);
+  vec3 p;
+
+  float t1 = t * 0.7;
+  float t2 = t * 0.9;
+  float tSpeed1 = t * uSpeed1;
+  float tSpeed2 = t * uSpeed2 * uDir2;
+
+  for (int i = 0; i < MAX_STEPS; ++i) {
+    p = o + u * d;
+    p.x -= 15.0;
+
+    float px = p.x;
+    float wob1 = uBend1 + sin(t1 + px * 0.8) * 0.1;
+    float wob2 = uBend2 + cos(t2 + px * 1.1) * 0.1;
+
+    float px2 = px + pi_2;
+    vec2 sinOffset = sin(vec2(px, px2) + tSpeed1) * wob1;
+    vec2 cosOffset = cos(vec2(px, px2) + tSpeed2) * wob2;
+
+    vec2 yz = p.yz;
+    float pxLt = px + lt;
+    k.x = max(pxLt, length(yz - sinOffset) - lt);
+    k.y = max(pxLt, length(yz - cosOffset) - lt);
+
+    float current = min(k.x, k.y);
+    s = min(s, current);
+    if (s < 0.001 || d > 300.0) break;
+    d += s * 0.7;
+  }
+
+  float sqrtD = sqrt(d);
+  vec3 raw = max(cos(d * pi2) - s * sqrtD - vec3(k, 0.0), 0.0);
+  raw.gb += 0.1;
+  float maxC = max(raw.r, max(raw.g, raw.b));
+  if (maxC < 0.15) discard;
+  raw = raw * 0.4 + raw.brg * 0.6 + raw * raw;
+  float lum = dot(raw, vec3(0.299, 0.587, 0.114));
+  float w1 = max(0.0, 1.0 - k.x * 2.0);
+  float w2 = max(0.0, 1.0 - k.y * 2.0);
+  float wt = w1 + w2 + 0.001;
+  vec3 c = (uColor1 * w1 + uColor2 * w2) / wt * lum * 3.5;
+  C = vec4(c, 1.0);
+}
+
+void main() {
+  vec2 coord = gl_FragCoord.xy + uOffset;
+  coord -= 0.5 * iResolution;
+  float c = cos(uRotation), s = sin(uRotation);
+  coord = mat2(c, -s, s, c) * coord;
+  coord += 0.5 * iResolution;
+
+  vec4 color;
+  mainImage(color, coord);
+  gl_FragColor = color;
+}
+`
+};
+
+function initializePlasmaWave() {
+    const root = document.getElementById('plasma-wave');
+    if (!root) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'plasma-wave-canvas';
+    root.appendChild(canvas);
+
+    const gl = canvas.getContext('webgl', {
+        alpha: true,
+        antialias: false,
+        depth: false,
+        stencil: false,
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false,
+        powerPreference: 'high-performance'
+    });
+
+    if (!gl) {
+        console.warn('PlasmaWave no se inicializó: WebGL no está disponible.');
+        return;
+    }
+
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, PLASMA_WAVE_SHADER.vertex);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, PLASMA_WAVE_SHADER.fragment);
+    const program = createProgram(gl, vertexShader, fragmentShader);
+
+    const positionLocation = gl.getAttribLocation(program, 'position');
+    const iTimeLocation = gl.getUniformLocation(program, 'iTime');
+    const iResolutionLocation = gl.getUniformLocation(program, 'iResolution');
+    const uOffsetLocation = gl.getUniformLocation(program, 'uOffset');
+    const uRotationLocation = gl.getUniformLocation(program, 'uRotation');
+    const uFocalLengthLocation = gl.getUniformLocation(program, 'uFocalLength');
+    const uSpeed1Location = gl.getUniformLocation(program, 'uSpeed1');
+    const uSpeed2Location = gl.getUniformLocation(program, 'uSpeed2');
+    const uDir2Location = gl.getUniformLocation(program, 'uDir2');
+    const uBend1Location = gl.getUniformLocation(program, 'uBend1');
+    const uBend2Location = gl.getUniformLocation(program, 'uBend2');
+    const uColor1Location = gl.getUniformLocation(program, 'uColor1');
+    const uColor2Location = gl.getUniformLocation(program, 'uColor2');
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+
+    gl.useProgram(program);
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.STENCIL_TEST);
+    gl.clearColor(0, 0, 0, 0);
+
+    const colors = [hexToRgb('#A855F7'), hexToRgb('#06B6D4')];
+    const resolution = [1, 1];
+    const offset = [0, 0];
+
+    function resize() {
+        const { width, height } = root.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        canvas.width = Math.max(1, Math.floor(width * dpr));
+        canvas.height = Math.max(1, Math.floor(height * dpr));
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        resolution[0] = canvas.width;
+        resolution[1] = canvas.height;
+    }
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(root);
+    resize();
+
+    const startTime = performance.now();
+    let frameId;
+
+    function animate(now) {
+        gl.useProgram(program);
+        gl.uniform1f(iTimeLocation, (now - startTime) * 0.001);
+        gl.uniform2fv(iResolutionLocation, resolution);
+        gl.uniform2fv(uOffsetLocation, offset);
+        gl.uniform1f(uRotationLocation, 0);
+        gl.uniform1f(uFocalLengthLocation, 0.8);
+        gl.uniform1f(uSpeed1Location, 0.05);
+        gl.uniform1f(uSpeed2Location, 0.05);
+        gl.uniform1f(uDir2Location, 1.0);
+        gl.uniform1f(uBend1Location, 1);
+        gl.uniform1f(uBend2Location, 0.5);
+        gl.uniform3fv(uColor1Location, colors[0]);
+        gl.uniform3fv(uColor2Location, colors[1]);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        frameId = requestAnimationFrame(animate);
+    }
+
+    frameId = requestAnimationFrame(animate);
+}
+
+function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        gl.deleteProgram(program);
+        return null;
+    }
+    return program;
+}
+
+async function loadMusicPlaylist() {
+    try {
+        const response = await fetch(MUSIC_PLAYER_CONFIG.playlistUrl, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('Playlist no disponible');
+        }
+
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+            musicPlayer.playlist = data.map((item) => String(item).trim()).filter(Boolean);
+            return;
+        }
+    } catch (error) {
+        // Fallback si no existe songs/playlist.json o no es válido.
+    }
+
+    musicPlayer.playlist = MUSIC_PLAYER_CONFIG.defaultPlaylist.slice();
+}
+
+function setMusicTrack(index, shouldPlay = false) {
+    if (!musicPlayer.audio || musicPlayer.playlist.length === 0) return;
+
+    musicPlayer.currentIndex = ((index % musicPlayer.playlist.length) + musicPlayer.playlist.length) % musicPlayer.playlist.length;
+    musicPlayer.audio.src = musicPlayer.playlist[musicPlayer.currentIndex];
+    musicPlayer.audio.load();
+
+    updateMusicPlayerTrackInfo();
+    updateMusicPlayerButtons();
+
+    if (shouldPlay) {
+        musicPlayer.audio.play().catch(() => {
+            if (musicPlayer.elements.status) {
+                musicPlayer.elements.status.textContent = 'Toca reproducir para escuchar la pista';
+            }
+        });
+    }
+
+    try {
+        localStorage.setItem(MUSIC_PLAYER_CONFIG.storageKey, String(musicPlayer.currentIndex));
+    } catch (error) {
+        // Ignorar errores de storage.
+    }
+}
+
+function updateMusicPlayerTrackInfo() {
+    if (!musicPlayer.elements.trackTitle) return;
+    const current = musicPlayer.playlist[musicPlayer.currentIndex] || '';
+    const label = current.split('/').pop().replace(/[-_]/g, ' ') || 'Sin pista seleccionada';
+    musicPlayer.elements.trackTitle.textContent = label;
+
+    if (musicPlayer.elements.status) {
+        musicPlayer.elements.status.textContent = `Lista de reproducción (${musicPlayer.currentIndex + 1}/${musicPlayer.playlist.length})`;
+    }
+}
+
+function updateMusicPlayerButtons() {
+    if (!musicPlayer.elements.playPause || !musicPlayer.audio) return;
+    const isPlaying = !musicPlayer.audio.paused && !musicPlayer.audio.ended;
+    musicPlayer.elements.playPause.innerHTML = `<i class="bx ${isPlaying ? 'bx-pause' : 'bx-play'}"></i>`;
+    musicPlayer.elements.playPause.setAttribute('aria-label', isPlaying ? 'Pausar' : 'Reproducir');
+    musicPlayer.elements.playPause.title = isPlaying ? 'Pausar' : 'Reproducir';
+}
+
+function toggleMusicPlayback() {
+    if (!musicPlayer.audio) return;
+    if (musicPlayer.audio.paused) {
+        musicPlayer.audio.play().catch(() => {
+            if (musicPlayer.elements.status) {
+                musicPlayer.elements.status.textContent = 'Haz clic en reproducir para iniciar la música';
+            }
+        });
+    } else {
+        musicPlayer.audio.pause();
+    }
+}
+
+function handleNextTrack() {
+    setMusicTrack(musicPlayer.currentIndex + 1, true);
+}
+
+function handlePrevTrack() {
+    setMusicTrack(musicPlayer.currentIndex - 1, true);
 }
 
 /** Sincroniza el estado visual (clase `active` y `aria-pressed`) de los botones de idioma. */

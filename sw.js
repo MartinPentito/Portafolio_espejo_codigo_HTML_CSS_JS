@@ -13,15 +13,16 @@
  */
 
 // ─── Service Worker — Portfolio PWA ────────────────────────────────────────
-const CACHE_NAME = 'mp-portfolio-v1';
+const CACHE_NAME = 'mp-portfolio-v2';
 
 // Lista de activos que se precargan durante la instalación (app shell).
 // Estos recursos estarán disponibles offline desde el primer uso.
 const PRECACHE_ASSETS = [
     './',
     './index.html',
-    './css/styles.css',
-    './js/script.js',
+    './css/styles.min.css?v=2',
+    './js/script.js?v=2',
+    './js/splash-cursor.js?v=2',
     './data/data.json',
     './assets/ThisJipi_img.png',
     './assets/ThisJipi_img_backgroundoff.png',
