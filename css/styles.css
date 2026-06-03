@@ -433,12 +433,7 @@ body {
 }
 
 .music-player-title {
-    font-family: inherit;
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--accent);
+    display: none;
 }
 
 .music-player-status {

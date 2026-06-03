@@ -873,7 +873,7 @@ function updateMusicPlayerTrackInfo() {
     musicPlayer.elements.trackTitle.textContent = label;
 
     if (musicPlayer.elements.status) {
-        musicPlayer.elements.status.textContent = `Lista de reproducción (${musicPlayer.currentIndex + 1}/${musicPlayer.playlist.length})`;
+        musicPlayer.elements.status.textContent = '';
     }
 }
 
