@@ -1,4 +1,4 @@
-﻿(function () {
+﻿/* (function () {
     const config = {
         SIM_RESOLUTION: 128,
         DYE_RESOLUTION: 1440,
@@ -1014,3 +1014,4 @@
 
     document.addEventListener('DOMContentLoaded', init);
 })();
+ */

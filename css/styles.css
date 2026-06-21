@@ -1292,7 +1292,6 @@ audio#music-player-audio {
 
     /* Sidebar moves below content as a secondary panel */
     .sidebar {
-        order: 2;
         flex: none;
         width: 100%;
         max-height: 32vh;
