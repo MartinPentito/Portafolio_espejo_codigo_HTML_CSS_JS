@@ -34,8 +34,8 @@ const LOCALE_BY_LANG = {
 const I18N = {
     es: {
         page_title_suffix: 'Portfolio',
-        theme_title: 'theme:',
-        language_title: 'lang:',
+        theme_title: 'PageTheme:',
+        language_title: 'PageLang:',
         theme_aria: 'Temas inspirados en Visual Studio Code',
         lang_aria: 'Idioma de la web',
         nav_aria: 'Secciones del portfolio',
@@ -715,6 +715,70 @@ function hexToRgb(hex) {
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;
     return [r, g, b];
+}
+
+// ─── Sonidos para las Secciones del Nav ───────────────────────────────────────
+/**
+ * Reproduzca un sonido único para cada sección del portfolio.
+ * Cada sección tiene una frecuencia (nota musical) diferente.
+ * @param {string} sectionId - ID de la sección (profile, stack, stats, etc)
+ */
+function playNavSectionSound(sectionId) {
+    // Frecuencias de notas musicales (en Hz) - Escala de Do mayor
+    const soundMap = {
+        profile:    261.63,  // Do (C4)
+        stack:      293.66,  // Re (D4)
+        stats:      329.63,  // Mi (E4)
+        experience: 349.23,  // Fa (F4)
+        education:  392.00,  // Sol (G4)
+        services:   440.00,  // La (A4)
+        projects:   493.88   // Si (B4)
+    };
+
+    const frequency = soundMap[sectionId];
+    if (!frequency) return;
+
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Crear oscilador
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+
+        // Volumen y duración
+        const now = audioContext.currentTime;
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.3);
+
+        showToast(`🎵 ${sectionId.toUpperCase()}`);
+    } catch (error) {
+        console.debug('Web Audio API no disponible:', error);
+    }
+}
+
+/**
+ * Muestra solo una sección y oculta todas las demás (comportamiento de tabs).
+ * @param {string} sectionId - ID de la sección a mostrar
+ */
+function showOnlySection(sectionId) {
+    const allSections = document.querySelectorAll('.code-section');
+    allSections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
 }
 
 const PLASMA_WAVE_SHADER = {
@@ -2004,6 +2068,21 @@ function initializeInteractions() {
             e.preventDefault();
             const target = document.getElementById(tab.getAttribute('href').slice(1));
             if (!target) return;
+            
+            // Mostrar solo la sección seleccionada
+            showOnlySection(target.id);
+            
+            // Actualizar estado activo del nav
+            tabs.forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-current', 'false');
+            });
+            tab.classList.add('active');
+            tab.setAttribute('aria-current', 'page');
+            
+            // Reproducir sonido para la sección
+            playNavSectionSound(target.id);
+            
             if (isContainerScrollable()) {
                 // Scroll interno del contenedor
                 const offset = target.getBoundingClientRect().top
@@ -2057,6 +2136,11 @@ function initializeInteractions() {
     mainContent.addEventListener('scroll', updateActiveTab, { passive: true });
     window.addEventListener('scroll', updateActiveTab, { passive: true });
     updateActiveTab();
+    
+    // Mostrar la primera sección por defecto
+    if (sections.length > 0) {
+        showOnlySection(sections[0].id);
+    }
 }
 
 /**
@@ -2382,6 +2466,24 @@ function scrollToSection(sectionId) {
     const mainContent = document.querySelector('.main-content');
     if (!target || !mainContent) return;
 
+    // Mostrar solo la sección seleccionada
+    showOnlySection(sectionId);
+    
+    // Actualizar el nav
+    const tabs = document.querySelectorAll('.nav-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-current', 'false');
+    });
+    const activeTab = document.querySelector(`.nav-tab[href="#${sectionId}"]`);
+    if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.setAttribute('aria-current', 'page');
+    }
+    
+    // Reproducir sonido
+    playNavSectionSound(sectionId);
+
     const offset = target.getBoundingClientRect().top
         - mainContent.getBoundingClientRect().top
         + mainContent.scrollTop - 10;
@@ -2695,7 +2797,7 @@ if ('serviceWorker' in navigator) {
 // Nota Musical Flotante Interactiva
 /**
  * Inicializa la nota musical flotante que se mueve por la pantalla.
- * Al hacer clic, gira con una animaci�n smooth.
+ * Al hacer clic, gira con una animaci�n smooth.
  */
 function initializeFloatingNote() {
     const floatingNote = document.getElementById('floating-note');
@@ -2718,5 +2820,5 @@ function initializeFloatingNote() {
     });
 }
 
-// Inicializar nota cuando el DOM est� listo
+// Inicializar nota cuando el DOM est� listo
 document.addEventListener('DOMContentLoaded', initializeFloatingNote);

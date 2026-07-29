@@ -295,7 +295,7 @@ body {
     white-space: nowrap;
     border-top: 2px solid transparent;
     border-bottom: 2px solid transparent;
-    transition: color 0.15s, background-color 0.15s;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s;
 }
 
 .nav-tab:hover {
@@ -306,14 +306,15 @@ body {
 
 .nav-tab.active {
     color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.12);
     border-top-color: var(--accent);
-    background-color: var(--bg-main);
+    border-bottom-color: rgba(var(--accent-rgb), 0.20);
 }
 
 .nav-tab.active:hover {
     color: var(--text-main);
-    background-color: rgba(255, 255, 255, 0.08);
-    border-bottom-color: rgba(var(--accent-rgb), 0.20);
+    background-color: rgba(255, 255, 255, 0.16);
+    border-bottom-color: rgba(var(--accent-rgb), 0.30);
 }
 
 .theme-switcher {
@@ -1018,6 +1019,12 @@ audio#music-player-audio {
 
 .code-section {
     padding-bottom: 48px;
+    display: none;
+    animation: slideInTab 0.3s ease-out;
+}
+
+.code-section.active {
+    display: block;
 }
 
 /* ─── Animación de entrada al hacer scroll ─── */
@@ -1028,6 +1035,17 @@ audio#music-player-audio {
 
 .code-section.animate-in.visible {
     transform: translateY(0);
+}
+
+@keyframes slideInTab {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
